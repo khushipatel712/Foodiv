@@ -43,22 +43,15 @@ import SmtpSetting from './components/Admin/Smtpsetting';
 import CustomerSupport from './components/Admin/CustomerSupport';
 import {Provider} from 'react-redux';
 import store from '../src/app/store';
-import MenuComponent from './components/User/MenuComponent';
 import CartView from './components/User/CartView';
 import Checkout from './components/User/Checkout';
 import OrderConfirmation from './components/User/OrderConfirmation';
-import { UserRegisterProvider } from './components/contexts/userRegisterContext';
-import UserRegistrationFlow from './components/User/UserRegistratonFlow';
-import Navbar1 from './components/User/Navbar'
 import HomePage from './components/User/Pages/HomePage';
-import RegisterModal from './components/User/RegisterModal';
-import OTPFormuser from './components/User/OTPFormuser';
-import SetPasswordModal from './components/User/SetPasswordModal';
 function App() {
   return (
-  
+   <RegisterProvider>
     <Provider store={store}>
-      <UserRegisterProvider>
+   
     <Router>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -66,30 +59,13 @@ function App() {
           <Route path="*" element={<Footer />} />
         </Route>
 
-        <Route path="/register" element={<RegisterProvider><Register /></RegisterProvider>} />
-        <Route path="/verifyotp" element={<RegisterProvider><OTPForm /></RegisterProvider>} />
-        <Route path="/login" element={<LoginForm />} />
-
 
      
         <Route path='/:id/user/menu' element={<HomePage/>}/>
 <Route path='/:id/user/cartview' element={<CartView/>}/>
 <Route path='/:id/user/checkout' element={<Checkout/>}/>
 <Route path='/:id/user/confirmation' element={<OrderConfirmation/>}/>
-<Route path='/register' element={<RegisterModal />} />
-<Route path='/otp' element={<OTPFormuser />} />
-<Route path='/password' element={<SetPasswordModal/>}/>
 
-
-<Route path="/register-modal" element={<RegisterModal />} />
-            <Route path="/otp-user" element={<OTPFormuser />} />
-            <Route path="/password" element={<SetPasswordModal />} />
-            <Route path="/registration-flow" element={<UserRegistrationFlow />} />
-
-  {/* <UserRegisterProvider>
-      <Navbar1/>
-      {/* Other components */}
-      {/* </UserRegisterProvider> */} 
 
 
         <Route path="/admin" element={<AdminLayout />}>
@@ -113,9 +89,9 @@ function App() {
     
       </Routes>
     </Router>
-    </UserRegisterProvider>
+   
     </Provider>
-  
+    </RegisterProvider>
   );
 }
 

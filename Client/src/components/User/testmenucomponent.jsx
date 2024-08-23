@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import Navbar from './Navbar';
 import DrawerComponent from './DrawerComponent';
-import { IoSearch } from "react-icons/io5";
+import { GrSquare } from 'react-icons/gr';
+import { useFetchMenuItemsQuery } from '../../services/menuitemApi'; // Import the API hooks
 
 const MenuComponent = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,21 +11,8 @@ const MenuComponent = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [cartItems, setCartItems] = useState([]);
 
-    // Array of menu items
-    const menuItems = [
-        {
-            category: "Fries",
-            items: [
-                { name: "Fries", price: 50.0, isVeg: true },
-            ],
-        },
-        {
-            category: "Burger",
-            items: [
-                { name: "Burger", price: 100.0, isVeg: true },
-            ],
-        },
-    ];
+    // Fetch menu items using the API hook
+    const { data: menuItems = [], error, isLoading } = useFetchMenuItemsQuery();
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -42,19 +30,37 @@ const MenuComponent = () => {
         setCartItems(prevItems => [...prevItems, item]);
     };
 
-    const totalAmount = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2); 
+    const totalAmount = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2);
+
+    // Render loading state
+    if (isLoading) return <div>Loading...</div>;
+
+    // Render error state
+    if (error) return <div>Error fetching menu items.</div>;
+
+    // Group items by category
+    const groupedItems = menuItems.reduce((acc, item) => {
+        if (!acc[item.category?.categoryName]) {
+            acc[item.category?.categoryName] = [];
+        }
+        acc[item.category?.categoryName].push(item);
+        return acc;
+    }, {});
+
+    // Extract unique categories
+    const uniqueCategories = Object.keys(groupedItems);
 
     return (
         <>
-            <Navbar />
 
             <div className="flex flex-col lg:flex-row h-auto mx-20">
                 {/* Sidebar */}
-                <div className={`bg-white lg:w-1/6 flex text-right pt-10 lg:block ${isMenuOpen ? 'block' : 'hidden'} lg:static z-10 inset-0 lg:h-auto h-full shadow-lg lg:shadow-none`}>
+                <div className={`bg-white lg:w-1/6 flex text-right pt-10 lg:block ${isMenuOpen ? 'block' : 'hidden'} lg:static z-10 inset-0 lg:h-96 h-full shadow-lg lg:shadow-none`}>
                     <ul className="flex flex-col p-4 space-y-4">
-                        {menuItems.map((menuItem, index) => (
+                        {/* Display unique categories */}
+                        {uniqueCategories.map((categoryName, index) => (
                             <li key={index} className="cursor-pointer text-orange-500 hover:text-orange-700">
-                                {menuItem.category}
+                                {categoryName}
                             </li>
                         ))}
                     </ul>
@@ -64,18 +70,14 @@ const MenuComponent = () => {
                 <div className="flex-1 px-10 lg:pl-10 m-10 border-l-2 h-full">
                     {/* Search and Veg Toggle */}
                     <div className="flex items-center justify-between mb-6">
-                       {/* <div className='flex'> */}
-                        {/* <IoSearch/> */}
                         {/* Search Bar */}
                         <input
                             type="text"
                             placeholder="Search here..."
                             className="border border-gray-300 rounded-md p-[6px] w-full lg:w-1/3"
-    
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                              {/* </div> */}
                         {/* Veg Only Toggle */}
                         <div className="flex items-center space-x-2">
                             <label className="flex items-center cursor-pointer">
@@ -109,20 +111,30 @@ const MenuComponent = () => {
 
                     {/* Menu Items */}
                     <div className="space-y-6 w-full lg:w-1/2">
-                        {menuItems.map((menuItem, index) => (
-                            <div key={index}>
+                        {uniqueCategories.map((categoryName, idx) => (
+                            <div key={idx}>
                                 <div className="inline-flex items-center relative">
-                                    <span className="text-lg font-semibold mb-1">{menuItem.category}</span>
+                                    <div className="text-lg font-semibold mb-1">{categoryName}</div>
                                     <div className="absolute bottom-0 left-0 w-full border-b-2 border-dotted border-black" />
                                 </div>
-                                {
-                                    menuItem.items
-                                        .filter(item => !isVegOnly || item.isVeg)
-                                        .filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                                        .map((item, idx) => (
-                                            <div key={idx} className="mt-2 border-gray-300 rounded-xl p-3 shadow-lg flex justify-between items-center">
+                                {groupedItems[categoryName]
+                                    .filter(item => !isVegOnly || item.veg) // Filter based on isVegOnly state
+                                    .filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                                    .map((item, itemIdx) => (
+                                        <div key={itemIdx}>
+                                            {item.subCategory?.name && (
+                                                <div className="text-lg mb-2 mt-2 text-orange-500 italic">
+                                                    {item.subCategory.name}
+                                                </div>
+                                            )}
+                                            <div className="mt-2 border-gray-300 rounded-xl p-3 shadow-lg flex justify-between items-center">
                                                 <div>
-                                                    <h3 className="text-base font-semibold">{item.name}</h3>
+                                                    <div className="flex items-center">
+                                                        <div className="text-base font-semibold">{item.name}</div>
+                                                        <div className={`ml-4 ${item.veg ? 'text-green-500' : 'text-red-500'}`}>
+                                                            <GrSquare size={16} />
+                                                        </div>
+                                                    </div>
                                                     <p>₹ {item.price.toFixed(2)}</p>
                                                 </div>
                                                 <button
@@ -132,8 +144,8 @@ const MenuComponent = () => {
                                                     ADD
                                                 </button>
                                             </div>
-                                        ))
-                                }
+                                        </div>
+                                    ))}
                             </div>
                         ))}
                     </div>
@@ -158,9 +170,9 @@ const MenuComponent = () => {
                     </button>
                 </div>
                 <ul className="flex flex-col p-4 space-y-4">
-                    {menuItems.map((menuItem, index) => (
+                    {uniqueCategories.map((categoryName, index) => (
                         <li key={index} className="cursor-pointer text-orange-500 hover:text-orange-700" onClick={handleMenuClick}>
-                            {menuItem.category}
+                            {categoryName}
                         </li>
                     ))}
                 </ul>
@@ -176,10 +188,10 @@ const MenuComponent = () => {
 
             <div className='flex flex-col items-center justify-center'>
                 <div className='text-orange-600 text-sm mb-4'>
-                Powered by Foodiv
+                    Powered by Foodiv
                 </div>
                 <div>
-                © Shivi Fries
+                    © Shivi Fries
                 </div>
             </div>
 

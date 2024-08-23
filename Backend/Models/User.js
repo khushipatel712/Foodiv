@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const Admin = require ('./adminModel')
 
 // Define the User schema
 const userSchema = new Schema({
-    fullName: {
+    name: {
         type: String,
         required: true,
         trim: true
@@ -25,7 +26,8 @@ const userSchema = new Schema({
     isVerified: {
         type: Boolean,
         default: false
-    }
+    },
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true }
 });
 
 // Create and export the User model

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registeruser, verifyOTP} = require('../controllers/userController');
+const { registeruser, verifyOTP, createUser, login} = require('../controllers/userController');
 // const {authenticateToken} = require('../middlewares/authMiddleware');
 const upload = require('../config/multerConfig');
 
@@ -14,8 +14,10 @@ router.post('/registeruser',upload.none(), registeruser);
 
 router.post('/verify-otpuser',upload.none(), verifyOTP);
 
+router.post('/createuser/:adminId',upload.none(), createUser);
+
 // // Route to log in
-// router.post('/login',upload.none(), login);
+router.post('/user/login/:adminId',upload.none(), login);
 
 // router.get('/profile', authenticateToken, getProfile);
 

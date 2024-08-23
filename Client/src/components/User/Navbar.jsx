@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useUserRegister } from '../contexts/userRegisterContext';
+import { useParams } from 'react-router-dom';
 import LoginModal from './LoginModal';
-import RegisterModal from './RegisterModal'; // Ensure the correct import
-import OTPModal from './OTPFormuser';
-import PasswordModal from './SetPasswordModal';
+import RegisterModal from './RegisterModal';
 import { useGetProfileByIdQuery } from '../../services/adminApi';
+import Cookies from 'js-cookie';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [token, setToken] = useState(Cookies.get('token') || '');
 
-  const { step } = useUserRegister();
-  const navigate = useNavigate();
   const { id } = useParams();
   const { data: fetchedProfile, error } = useGetProfileByIdQuery(id);
 
@@ -25,12 +22,6 @@ const Navbar = () => {
       setProfile(fetchedProfile);
     }
   }, [fetchedProfile]);
-
-  useEffect(() => {
-    if (!isRegisterModalOpen && step === 1) {
-      navigate('/register');
-    }
-  }, [step, isRegisterModalOpen, navigate]);
 
   const toggleMenu = () => setMenuOpen(prev => !prev);
   const closeMenu = () => setMenuOpen(false);
@@ -45,8 +36,22 @@ const Navbar = () => {
     closeMenu();
   };
 
-  const handleCloseLoginModal = () => setIsLoginModalOpen(false);
-  const handleCloseRegisterModal = () => setIsRegisterModalOpen(false);
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+    // Refresh the component by updating state
+    setToken(Cookies.get('token') || '');
+  };
+
+  const handleCloseRegisterModal = () => {
+    setIsRegisterModalOpen(false);
+    // Refresh the component by updating state
+    setToken(Cookies.get('token') || '');
+  };
+
+  const handleLogout = () => {
+    Cookies.remove('token'); // Remove token from cookies
+    setToken(''); // Clear token from state
+  };
 
   return (
     <div className="relative z-50">
@@ -74,24 +79,38 @@ const Navbar = () => {
             </button>
             <ul className="mt-6 space-y-4">
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Home</a></li>
-              <li>
-                <button
-                  type="button"
-                  onClick={handleLoginClick}
-                  className="block text-orange-500 hover:text-orange-700"
-                >
-                  Login
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={handleRegisterClick}
-                  className="block text-orange-500 hover:text-orange-700"
-                >
-                  Register
-                </button>
-              </li>
+              {!token ? (
+                <>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={handleLoginClick}
+                      className="block text-orange-500 hover:text-orange-700"
+                    >
+                      Login
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={handleRegisterClick}
+                      className="block text-orange-500 hover:text-orange-700"
+                    >
+                      Register
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block text-orange-500 hover:text-orange-700"
+                  >
+                    Logout
+                  </button>
+                </li>
+              )}
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Terms and Conditions</a></li>
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Privacy Policy</a></li>
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Cancellation Policy</a></li>
@@ -111,18 +130,8 @@ const Navbar = () => {
         </div>
       )}
 
-      {isLoginModalOpen && <LoginModal onClose={handleCloseLoginModal} />}
-      {isRegisterModalOpen && <RegisterModal onClose={handleCloseRegisterModal} />}
-      
-      {step === 1 && !isRegisterModalOpen && (
-        <FullNameEmailModal onNext={() => setIsRegisterModalOpen(true)} />
-      )}
-      {step === 2 && !isRegisterModalOpen && (
-        <OTPModal onNext={() => setIsRegisterModalOpen(true)} onPrev={() => setIsRegisterModalOpen(false)} />
-      )}
-      {step === 3 && !isRegisterModalOpen && (
-        <PasswordModal onPrev={() => setIsRegisterModalOpen(false)} />
-      )}
+      {isLoginModalOpen && <LoginModal onClose={handleCloseLoginModal} adminId={id}/>}
+      {isRegisterModalOpen && <RegisterModal onClose={handleCloseRegisterModal} adminId={id} />}
     </div>
   );
 };
