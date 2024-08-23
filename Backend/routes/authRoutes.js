@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, verifyOTP, login, getProfile, updateProfile, updateStatus} = require('../controllers/authController');
+const { register, verifyOTP, login, getProfile, updateProfile, updateStatus, getProfileById} = require('../controllers/authController');
 const {authenticateToken} = require('../middlewares/authMiddleware');
 const upload = require('../config/multerConfig');
 
@@ -18,6 +18,8 @@ router.post('/verify-otp',upload.none(), verifyOTP);
 router.post('/login',upload.none(), login);
 
 router.get('/profile', authenticateToken, getProfile);
+
+router.get('/profilebyid/:id',  getProfileById);
 
 // Update profile details
 router.put('/profile', authenticateToken, upload.single('image'), updateProfile);

@@ -99,3 +99,45 @@ exports.deleteMenuItem = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+exports.updateStatus1 = async (req, res) => {
+  try {
+    // Extract `id` from URL parameters
+    const { id } = req.params;
+
+    console.log('Request Parameters:', req.params);
+
+    // Find the category by ID
+    const menuitem = await MenuItem.findById(id);
+
+    if (!menuitem) {
+      return res.status(404).json({ message: 'Menuitem not found' });
+    }
+
+    // Toggle the `show` field
+    menuitem.show = !menuitem.show;
+    await menuitem.save();
+
+    // Respond with the updated `show` status
+    res.status(200).json({ show: menuitem.show });
+  } catch (error) {
+    console.error('Error updating status:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.getMenuItemByAdminId = async (req, res) => {
+  try {
+
+    const menuItems = await MenuItem.find({ adminId: req.params.adminId })
+      .populate('category')
+      .populate('subCategory');
+    if (!menuItems.length) {
+      return res.status(404).json({ message: 'No menu items found for this admin' });
+    }
+    res.status(200).json(menuItems);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

@@ -1,88 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { GrSquare } from "react-icons/gr";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
-import { useFetchCategoriesQuery, useUpdateCategoryStatusMutation } from '../../services/categoryApi'; // Adjust the import path
+import { useFetchCategoriesQuery, useUpdateCategoryStatusMutation, useDeleteCategoryMutation } from '../../services/categoryApi'; 
+import { useFetchMenuItemsQuery, useUpdateMenuItemStatusMutation } from '../../services/menuitemApi';
+import { MdDelete } from "react-icons/md";
 
 const Menu = () => {
-    const [categories, setCategories] = useState([]);
-    const [menuItems, setMenuItems] = useState([]);
-    const [categoryState, setCategoryState] = useState([]); 
-
     const { data: fetchedCategories, error: fetchError } = useFetchCategoriesQuery();
+    const [categories, setCategories] = useState(fetchedCategories || []);
     const [updateCategoryStatus] = useUpdateCategoryStatusMutation();
+    const [deleteCategory] = useDeleteCategoryMutation();
+
+    const { data: fetchedMenuItems, error: menuItemsError } = useFetchMenuItemsQuery();
+    const [menuItems, setMenuItems] = useState(fetchedMenuItems || []);
+    const [updateMenuItemStatus] = useUpdateMenuItemStatusMutation();
 
     useEffect(() => {
-        const fetchMenuItems = async () => {
-            try {
-                const response = await axios.get('http://localhost:5001/api/menu-items');
-                const data = response.data;
-
-                setMenuItems(data);
-
-                // Extract unique categories from the fetched menu items
-                const uniqueCategories = [...new Set(data.map(item => item.category.categoryName))];
-                setCategories(uniqueCategories.map((name, index) => ({ name, id: index })));
-            } catch (error) {
-                console.error('Error fetching menu items:', error);
-            }
-        };
-
-        fetchMenuItems();
-    }, []);
-
-    useEffect(() => {
-        if (fetchedCategories) {
-            const updatedCategories = fetchedCategories.map(category => ({
-                name: category.categoryName,
-                id: category._id, 
-                show: category.show // Directly use the `show` field from the API
-            }));
-
-            setCategoryState(updatedCategories);
-        }
+        if (fetchedCategories) setCategories(fetchedCategories);
     }, [fetchedCategories]);
 
-    const toggleEnableItem = async (id) => {
-        try {
-            const item = menuItems.find(item => item._id === id);
-            if (item) {
-                const updatedItems = menuItems.map(item =>
-                    item._id === id ? { ...item, show: !item.show } : item
-                );
-                setMenuItems(updatedItems);
+    useEffect(() => {
+        if (fetchedMenuItems) setMenuItems(fetchedMenuItems);
+    }, [fetchedMenuItems]);
 
-                // Update the item status on the server
-                await axios.patch(`http://localhost:5001/api/menu-items/${id}`, { show: !item.show });
-            } else {
-                console.error('Item not found:', id);
-            }
+    const toggleEnableCategory = async (categoryId) => {
+        const updatedCategories = categories.map(cat =>
+            cat._id === categoryId ? { ...cat, show: !cat.show } : cat
+        );
+        setCategories(updatedCategories);
+
+        try {
+            await updateCategoryStatus({ id: categoryId, show: !categories.find(cat => cat._id === categoryId).show }).unwrap();
         } catch (error) {
-            console.error('Error updating item status:', error);
+            console.error('Error updating category status:', error);
+            // Revert local state if error occurs
+            setCategories(categories.map(cat =>
+                cat._id === categoryId ? { ...cat, show: !cat.show } : cat
+            ));
         }
     };
 
-    const toggleEnableCategory = async (categoryId) => {
-        try {
-            const category = categoryState.find(cat => cat.id === categoryId);
-            if (category) {
-                const updatedCategories = categoryState.map(cat =>
-                    cat.id === categoryId ? { ...cat, show: !cat.show } : cat
-                );
-                setCategoryState(updatedCategories);
+    const toggleEnableMenuItem = async (menuItemId) => {
+        const updatedMenuItems = menuItems.map(item =>
+            item._id === menuItemId ? { ...item, show: !item.show } : item
+        );
+        setMenuItems(updatedMenuItems);
 
-                // Update the category status on the server
-                await updateCategoryStatus({ id: categoryId, show: !category.show }).unwrap();
-            } else {
-                console.error('Category not found:', categoryId);
-            }
+        try {
+            await updateMenuItemStatus({ id: menuItemId, show: !menuItems.find(item => item._id === menuItemId).show }).unwrap();
         } catch (error) {
-            console.error('Error updating category status:', error);
+            console.error('Error updating menu item status:', error);
+            // Revert local state if error occurs
+            setMenuItems(menuItems.map(item =>
+                item._id === menuItemId ? { ...item, show: !item.show } : item
+            ));
+        }
+    };
+
+    const handleDeleteCategory = async (categoryId) => {
+        try {
+            await deleteCategory(categoryId).unwrap();
+            // Remove the deleted category from the state
+            setCategories(categories.filter(cat => cat._id !== categoryId));
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            // Optionally handle error
         }
     };
 
     if (fetchError) return <div>Error fetching categories</div>;
+    if (menuItemsError) return <div>Error fetching menu items</div>;
 
     return (
         <div className="max-w-6xl mx-auto p-6 bg-gray-100 shadow-md">
@@ -94,23 +82,29 @@ const Menu = () => {
             </div>
 
             <div className="flex flex-wrap gap-4 mb-6">
-                {categoryState.map(category => (
+                {categories.map(category => (
                     <div
-                        key={category.id} 
+                        key={category._id} 
                         className='flex items-center px-4 py-[6px] border rounded-2xl hover:bg-black hover:text-white w-fit'
                     >
-                        <span>{category.name}</span>
+                        <span>{category.categoryName}</span>
+                        <button
+                            onClick={() => handleDeleteCategory(category._id)}
+                            className="ml-2 text-red-500 hover:text-white "
+                        >
+                            <MdDelete className='size-5 hover:text-white'/>
+                        </button>
                     </div>
                 ))}
             </div>
 
             <div className="space-y-6">
-                {categoryState.map(category => (
-                    <div key={category.id}> 
+                {categories.map(category => (
+                    <div key={category._id}> 
                         <div className='flex flex-row gap-5 items-center '>
-                            <div className="text-xl font-semibold mb-4">{category.name}</div>
+                            <div className="text-xl font-semibold mb-4">{category.categoryName}</div>
                             <button
-                                onClick={() => toggleEnableCategory(category.id)} 
+                                onClick={() => toggleEnableCategory(category._id)} 
                                 className="mb-4"
                             >
                                 {category.show ? (
@@ -123,7 +117,7 @@ const Menu = () => {
 
                         <div className="space-y-4">
                             {menuItems
-                                .filter(item => item.category.categoryName === category.name && item.show) // Use `item.show` here
+                                .filter(item => item.category && item.category.categoryName === category.categoryName)
                                 .map(item => (
                                     <div key={item._id}>
                                         {item.subCategory && item.subCategory.name && (
@@ -150,7 +144,7 @@ const Menu = () => {
                                                         <button
                                                             onClick={(e) => {
                                                                 e.preventDefault(); 
-                                                                toggleEnableItem(item._id);
+                                                                toggleEnableMenuItem(item._id);
                                                             }}
                                                         >
                                                             {item.show ? <FaToggleOn className='text-green-600 size-7' /> : <FaToggleOff className='text-gray-300 size-7' />}

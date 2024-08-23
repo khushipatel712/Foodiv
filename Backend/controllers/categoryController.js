@@ -1,5 +1,6 @@
 const Category = require('../Models/Category');
 const Admin = require('../Models/adminModel');
+const MenuItem=require('../Models/MenuItem');
 
 // Create a new category
 exports.createCategory = async (req, res) => {
@@ -68,12 +69,20 @@ exports.updateCategory = async (req, res) => {
 // Delete a category
 exports.deleteCategory = async (req, res) => {
     try {
+        // Find the category by ID
         const category = await Category.findById(req.params.id);
 
-        if (!category) return res.status(404).json({ message: 'Category not found' });
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
 
+        // Delete related MenuItems
+        await MenuItem.deleteMany({ category: category._id });
+
+        // Delete the category
         await category.deleteOne();
-        res.json({ message: 'Category deleted successfully' });
+
+        res.json({ message: 'Category and related menu items deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }

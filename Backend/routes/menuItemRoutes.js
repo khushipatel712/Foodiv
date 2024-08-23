@@ -18,6 +18,9 @@ router.put('/menu-items/:id', upload.single('image'), menuItemController.updateM
 // Delete a menu item by ID
 router.delete('/menu-items/:id', menuItemController.deleteMenuItem);
 
+router.put('/menu-items/update/:id', menuItemController.updateStatus1);
 
+
+router.get('/menu-items/admin/:adminId', menuItemController.getMenuItemByAdminId);
 
 module.exports = router;

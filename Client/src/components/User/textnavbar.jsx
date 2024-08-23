@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useUserRegister } from '../contexts/userRegisterContext';
-import LoginModal from './LoginModal';
-import RegisterModal from './RegisterModal'; // Ensure the correct import
-import OTPModal from './OTPFormuser';
-import PasswordModal from './SetPasswordModal';
-import { useGetProfileByIdQuery } from '../../services/adminApi';
+import LoginModal from './LoginModal'; 
+import RegisterModal from './RegisterModal'; 
+import { useGetProfileByIdQuery } from '../../services/adminApi'; 
+import { useParams } from 'react-router-dom'; //
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [profile, setProfile] = useState(null);
-
-  const { step } = useUserRegister();
-  const navigate = useNavigate();
-  const { id } = useParams();
+  
+  const { id } = useParams(); 
+  
   const { data: fetchedProfile, error } = useGetProfileByIdQuery(id);
 
   useEffect(() => {
@@ -26,39 +22,46 @@ const Navbar = () => {
     }
   }, [fetchedProfile]);
 
-  useEffect(() => {
-    if (!isRegisterModalOpen && step === 1) {
-      navigate('/register');
-    }
-  }, [step, isRegisterModalOpen, navigate]);
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
-  const toggleMenu = () => setMenuOpen(prev => !prev);
-  const closeMenu = () => setMenuOpen(false);
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
 
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
-    closeMenu();
+    setMenuOpen(!menuOpen);
   };
 
   const handleRegisterClick = () => {
     setIsRegisterModalOpen(true);
-    closeMenu();
+    setMenuOpen(!menuOpen);
   };
 
-  const handleCloseLoginModal = () => setIsLoginModalOpen(false);
-  const handleCloseRegisterModal = () => setIsRegisterModalOpen(false);
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
+
+  const handleCloseRegisterModal = () => {
+    setIsRegisterModalOpen(false);
+  };
 
   return (
     <div className="relative z-50">
+      {/* Navbar */}
       <nav className="bg-white shadow-md flex items-center justify-between p-4 lg:px-20">
+        {/* Left side: Logo and text */}
         <div className="flex items-center">
           <img
-            src={profile?.image || "/path/to/default/logo.png"}
+            src="/path/to/your/logo.png" // Update this with the correct path to your image
             alt="Logo"
             className="h-8 w-8 object-cover mr-2"
           />
-          <h1 className="text-lg font-bold">{profile?.restaurantName || "Shivi Fries"}</h1>
+          <h1 className="text-lg font-bold">Shivi Fries</h1>
         </div>
+
         <div>
           <button onClick={toggleMenu} className="focus:outline-none">
             <FaBars size={20} />
@@ -66,6 +69,7 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Sidebar Menu */}
       {menuOpen && (
         <div className="fixed inset-y-0 right-0 justify-end bg-black bg-opacity-50 flex z-20">
           <div className="w-64 bg-white p-6 shadow-md">
@@ -75,7 +79,7 @@ const Navbar = () => {
             <ul className="mt-6 space-y-4">
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Home</a></li>
               <li>
-                <button
+                <button 
                   type="button"
                   onClick={handleLoginClick}
                   className="block text-orange-500 hover:text-orange-700"
@@ -84,7 +88,7 @@ const Navbar = () => {
                 </button>
               </li>
               <li>
-                <button
+                <button 
                   type="button"
                   onClick={handleRegisterClick}
                   className="block text-orange-500 hover:text-orange-700"
@@ -96,12 +100,12 @@ const Navbar = () => {
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Privacy Policy</a></li>
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Cancellation Policy</a></li>
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Shipping Policy</a></li>
+              {/* Display profile info if available */}
               {profile && (
                 <li className="mt-4 text-gray-700">
-                  <p><strong>Restaurant Name:</strong> {profile.restaurantName}</p>
+                  <p><strong>Name:</strong> {profile.name}</p>
                   <p><strong>Email:</strong> {profile.email}</p>
-                  <p><strong>Mobile Number:</strong> {profile.mobileNumber}</p>
-                  <p><strong>Address:</strong> {profile.address}, {profile.city}, {profile.state}</p>
+                  {/* Add more profile information as needed */}
                 </li>
               )}
               {error && <li className="mt-4 text-red-500">Error fetching profile data.</li>}
@@ -111,17 +115,13 @@ const Navbar = () => {
         </div>
       )}
 
-      {isLoginModalOpen && <LoginModal onClose={handleCloseLoginModal} />}
-      {isRegisterModalOpen && <RegisterModal onClose={handleCloseRegisterModal} />}
-      
-      {step === 1 && !isRegisterModalOpen && (
-        <FullNameEmailModal onNext={() => setIsRegisterModalOpen(true)} />
+      {/* Login Modal */}
+      {isLoginModalOpen && (
+        <LoginModal onClose={handleCloseLoginModal} />
       )}
-      {step === 2 && !isRegisterModalOpen && (
-        <OTPModal onNext={() => setIsRegisterModalOpen(true)} onPrev={() => setIsRegisterModalOpen(false)} />
-      )}
-      {step === 3 && !isRegisterModalOpen && (
-        <PasswordModal onPrev={() => setIsRegisterModalOpen(false)} />
+
+      {isRegisterModalOpen && (
+        <RegisterModal onClose={handleCloseRegisterModal} />
       )}
     </div>
   );

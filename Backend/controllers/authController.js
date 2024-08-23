@@ -230,3 +230,34 @@ exports.updateStatus = async (req, res) => {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   };
+
+  exports.getProfileById = async (req, res) => {
+    const { id } = req.params; // Get restaurantId from route params
+
+    try {
+        const user = await Admin.findById(id); // Find user by restaurantId
+
+        if (!user) return res.sendStatus(404); // Not Found
+
+        // Construct the full URL to the image
+        const imageUrl = user.image ? `http://localhost:5001/images/${path.basename(user.image)}` : null;
+
+        res.json({
+            id: user._id,
+            restaurantName: user.restaurantName,
+            email: user.email,
+            mobileNumber: user.mobileNumber,
+            state: user.state,
+            area: user.area,
+            city: user.city,
+            address: user.address,
+            latitude: user.latitude,
+            longitude: user.longitude,
+            domain: user.domain,
+            image: imageUrl // Add image URL to the response
+        });
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

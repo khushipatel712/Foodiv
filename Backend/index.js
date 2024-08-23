@@ -21,6 +21,7 @@ const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const subcategoryRoutes = require('./routes/subcategoryRoutes');
 const menuItemRoutes = require('./routes/menuItemRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -32,6 +33,7 @@ app.use('/api', authRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api', subcategoryRoutes);
 app.use('/api', menuItemRoutes);
+app.use('/api', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 const port = process.env.PORT || 5002;

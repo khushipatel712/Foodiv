@@ -44,6 +44,14 @@ export const adminApi = createApi({
       invalidatesTags: ['Profile'],
     }),
 
+
+    getProfileById: builder.query({
+      query: (id) => ({
+        url: `/profilebyid/${id}`, // Fetch profile by ID
+        method: 'GET',
+      }),
+    }),
+
     updateStatus: builder.mutation({
     query: () => ({
       url: '/update-status',
@@ -56,4 +64,4 @@ export const adminApi = createApi({
 
 
 
-export const { useLoginMutation, useGetProfileQuery, useUpdateProfileMutation, useUpdateStatusMutation } = adminApi;
+export const { useLoginMutation, useGetProfileQuery, useUpdateProfileMutation, useUpdateStatusMutation, useGetProfileByIdQuery, } = adminApi;

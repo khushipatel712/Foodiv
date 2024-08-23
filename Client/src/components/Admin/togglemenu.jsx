@@ -1,97 +1,63 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { GrSquare } from "react-icons/gr";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
-import { useFetchCategoriesQuery, useUpdateCategoryStatusMutation } from '../../services/categoryApi'; // Adjust the import path
+import { useFetchCategoriesQuery, useUpdateCategoryStatusMutation } from '../../services/categoryApi'; 
+import { useFetchMenuItemsQuery, useUpdateMenuItemStatusMutation } from '../../services/menuitemApi';
 
 const Menu = () => {
-    const [categories, setCategories] = useState([]);
-    const [menuItems, setMenuItems] = useState([]);
-    const [categoryState, setCategoryState] = useState([]);
-
-    // Use the RTK Query hook to fetch categories
     const { data: fetchedCategories, error: fetchError } = useFetchCategoriesQuery();
+    const [categories, setCategories] = useState(fetchedCategories || []);
     const [updateCategoryStatus] = useUpdateCategoryStatusMutation();
 
-    useEffect(() => {
-        const fetchMenuItems = async () => {
-            try {
-                const response = await axios.get('http://localhost:5001/api/menu-items');
-                const data = response.data;
-
-                console.log('Fetched Menu Items:', data); // Log data to verify structure
-
-                setMenuItems(data);
-
-                // Initialize categories
-                const uniqueCategoryIds = [...new Set(data.map(item => item.category.id))]; // Use category.id here
-                const categoriesWithDetails = uniqueCategoryIds.map(id => {
-                    const category = data.find(item => item.category.id === id)?.category;
-                    return {
-                        id: category?.id,
-                        name: category?.categoryName,
-                        enabled: true
-                    };
-                }).filter(cat => cat.id); // Ensure no `undefined` categories
-
-                console.log('Categories with IDs:', categoriesWithDetails); // Verify categories with IDs
-                setCategories(categoriesWithDetails); // Update categories state
-                setCategoryState(categoriesWithDetails); // Initialize categoryState with IDs
-            } catch (error) {
-                console.error('Error fetching menu items:', error);
-            }
-        };
-
-        fetchMenuItems();
-    }, []);
+    const { data: fetchedMenuItems, error: menuItemsError } = useFetchMenuItemsQuery();
+    const [menuItems, setMenuItems] = useState(fetchedMenuItems || []);
+    const [updateMenuItemStatus] = useUpdateMenuItemStatusMutation();
 
     useEffect(() => {
-        if (fetchedCategories) {
-            console.log('Fetched Categories:', fetchedCategories); // Log fetched categories to verify
-
-            const updatedCategories = fetchedCategories.map(category => ({
-                name: category.name,
-                id: category._id, // Ensure `_id` is used
-                enabled: true
-            }));
-
-            console.log('Updated Categories:', updatedCategories); // Verify updated categories
-            setCategoryState(updatedCategories); // Update categoryState with fetched categories
-        }
+        if (fetchedCategories) setCategories(fetchedCategories);
     }, [fetchedCategories]);
 
-    const toggleEnableItem = (id) => {
-        setMenuItems(
-            menuItems.map(item =>
-                item._id === id ? { ...item, enabled: !item.enabled } : item
-            )
-        );
-    };
+    useEffect(() => {
+        if (fetchedMenuItems) setMenuItems(fetchedMenuItems);
+    }, [fetchedMenuItems]);
 
     const toggleEnableCategory = async (categoryId) => {
+        const updatedCategories = categories.map(cat =>
+            cat._id === categoryId ? { ...cat, show: !cat.show } : cat
+        );
+        setCategories(updatedCategories);
+
         try {
-            console.log('Toggle Category ID:', categoryId); // Log the category ID to verify
-
-            const category = categoryState.find(cat => cat.id === categoryId);
-            console.log('Found Category:', category); // Log found category
-
-            if (category) {
-                const updatedCategories = categoryState.map(cat =>
-                    cat.id === categoryId ? { ...cat, enabled: !cat.enabled } : cat
-                );
-                setCategoryState(updatedCategories);
-
-                await updateCategoryStatus({ id: categoryId, show: !category.enabled }).unwrap();
-            } else {
-                console.error('Category not found:', categoryId);
-            }
+            await updateCategoryStatus({ id: categoryId, show: !categories.find(cat => cat._id === categoryId).show }).unwrap();
         } catch (error) {
             console.error('Error updating category status:', error);
+            // Revert local state if error occurs
+            setCategories(categories.map(cat =>
+                cat._id === categoryId ? { ...cat, show: !cat.show } : cat
+            ));
+        }
+    };
+
+    const toggleEnableMenuItem = async (menuItemId) => {
+        const updatedMenuItems = menuItems.map(item =>
+            item._id === menuItemId ? { ...item, show: !item.show } : item
+        );
+        setMenuItems(updatedMenuItems);
+
+        try {
+            await updateMenuItemStatus({ id: menuItemId, show: !menuItems.find(item => item._id === menuItemId).show }).unwrap();
+        } catch (error) {
+            console.error('Error updating menu item status:', error);
+            // Revert local state if error occurs
+            setMenuItems(menuItems.map(item =>
+                item._id === menuItemId ? { ...item, show: !item.show } : item
+            ));
         }
     };
 
     if (fetchError) return <div>Error fetching categories</div>;
+    if (menuItemsError) return <div>Error fetching menu items</div>;
 
     return (
         <div className="max-w-6xl mx-auto p-6 bg-gray-100 shadow-md">
@@ -105,24 +71,24 @@ const Menu = () => {
             <div className="flex flex-wrap gap-4 mb-6">
                 {categories.map(category => (
                     <div
-                        key={category.id} // Use category ID here
+                        key={category._id} 
                         className='flex items-center px-4 py-[6px] border rounded-2xl hover:bg-black hover:text-white w-fit'
                     >
-                        <span>{category.name}</span>
+                        <span>{category.categoryName}</span>
                     </div>
                 ))}
             </div>
 
             <div className="space-y-6">
-                {categoryState.map(category => (
-                    <div key={category.id}> {/* Use category ID here */}
-                        <div className='flex flex-row gap-5 items-center'>
-                            <div className="text-xl font-semibold mb-4">{category.name}</div>
+                {categories.map(category => (
+                    <div key={category._id}> 
+                        <div className='flex flex-row gap-5 items-center '>
+                            <div className="text-xl font-semibold mb-4">{category.categoryName}</div>
                             <button
-                                onClick={() => toggleEnableCategory(category.id)} // Pass category ID
+                                onClick={() => toggleEnableCategory(category._id)} 
                                 className="mb-4"
                             >
-                                {category.enabled ? (
+                                {category.show ? (
                                     <FaToggleOn className='text-green-600 size-7' />
                                 ) : (
                                     <FaToggleOff className='text-gray-300 size-7' />
@@ -132,7 +98,7 @@ const Menu = () => {
 
                         <div className="space-y-4">
                             {menuItems
-                                .filter(item => item.category.id === category.id && category.enabled) // Ensure filtering by correct ID
+                                .filter(item => item.category && item.category.categoryName === category.categoryName)
                                 .map(item => (
                                     <div key={item._id}>
                                         {item.subCategory && item.subCategory.name && (
@@ -158,11 +124,11 @@ const Menu = () => {
                                                         <div className="text-sm text-gray-600">₹ {item.price}.00</div>
                                                         <button
                                                             onClick={(e) => {
-                                                                e.preventDefault(); // To prevent triggering the Link while toggling
-                                                                toggleEnableItem(item._id);
+                                                                e.preventDefault(); 
+                                                                toggleEnableMenuItem(item._id);
                                                             }}
                                                         >
-                                                            {item.enabled ? <FaToggleOn className='text-green-600 size-7' /> : <FaToggleOff className='text-gray-300 size-7' />}
+                                                            {item.show ? <FaToggleOn className='text-green-600 size-7' /> : <FaToggleOff className='text-gray-300 size-7' />}
                                                         </button>
                                                     </div>
                                                 </div>
