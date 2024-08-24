@@ -13,6 +13,26 @@ const MenuComponent = () => {
     // Fetch menu items using the API hook
     const { data: menuItems = [], error, isLoading } = useFetchMenuItemsQuery();
 
+    const handleIncrement = (itemId) => {
+        setCartItems(prevItems =>
+            prevItems.map(item =>
+                item.id === itemId
+                    ? { ...item, quantity: (item.quantity || 1) + 1 }
+                    : item
+            )
+        );
+    };
+
+    const handleDecrement = (itemId) => {
+        setCartItems(prevItems =>
+            prevItems.map(item =>
+                item.id === itemId && item.quantity > 1
+                    ? { ...item, quantity: item.quantity - 1 }
+                    : item
+            )
+        );
+    };
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -129,32 +149,54 @@ const MenuComponent = () => {
                                 {groupedItems[categoryName]
                                     .filter(item => !isVegOnly || item.veg)
                                     .filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                                    .map((item, itemIdx) => (
-                                        <div key={itemIdx}>
-                                            {item.subCategory?.name && (
-                                                <div className="text-lg mb-2 mt-2 text-orange-500 italic">
-                                                    {item.subCategory.name}
-                                                </div>
-                                            )}
-                                            <div className="mt-2 border-gray-300 rounded-xl p-3 shadow-lg flex justify-between items-center">
-                                                <div>
-                                                    <div className="flex items-center">
-                                                        <div className="text-base font-semibold">{item.name}</div>
-                                                        <div className={`ml-4 ${item.veg ? 'text-green-500' : 'text-red-500'}`}>
-                                                            <GrSquare size={16} />
-                                                        </div>
+                                    .map((item, itemIdx) => {
+                                        // Find if item is already in cart
+                                        const cartItem = cartItems.find(cartItem => cartItem.id === item._id);
+
+                                        return (
+                                            <div key={itemIdx}>
+                                                {item.subCategory?.name && (
+                                                    <div className="text-lg mb-2 mt-2 text-orange-500 italic">
+                                                        {item.subCategory.name}
                                                     </div>
-                                                    <p>₹ {item.price.toFixed(2)}</p>
+                                                )}
+                                                <div className="mt-2 border-gray-300 rounded-xl p-3 shadow-lg flex justify-between items-center">
+                                                    <div>
+                                                        <div className="flex items-center">
+                                                            <div className="text-base font-semibold">{item.name}</div>
+                                                            <div className={`ml-4 ${item.veg ? 'text-green-500' : 'text-red-500'}`}>
+                                                                <GrSquare size={16} />
+                                                            </div>
+                                                        </div>
+                                                        <p>₹ {item.price.toFixed(2)}</p>
+                                                        {cartItem && (
+                                                            <div className="flex items-center mt-2">
+                                                                <button
+                                                                    className="px-2 py-1 bg-gray-200 text-gray-700 rounded-l"
+                                                                    onClick={() => handleDecrement(item._id)}
+                                                                >
+                                                                    -
+                                                                </button>
+                                                                <span className="px-4">{cartItem.quantity}</span>
+                                                                <button
+                                                                    className="px-2 py-1 bg-gray-200 text-gray-700 rounded-r"
+                                                                    onClick={() => handleIncrement(item._id)}
+                                                                >
+                                                                    +
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        className="text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white px-6 text-xs py-2 rounded"
+                                                        onClick={() => handleAddToCart(item)}
+                                                    >
+                                                        ADD
+                                                    </button>
                                                 </div>
-                                                <button
-                                                    className="text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white px-6 text-xs py-2 rounded"
-                                                    onClick={() => handleAddToCart(item)}
-                                                >
-                                                    ADD
-                                                </button>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                             </div>
                         ))}
                     </div>
