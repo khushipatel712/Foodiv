@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
-import Navbar from './Navbar';
 import DrawerComponent from './DrawerComponent';
 import { GrSquare } from 'react-icons/gr';
 import { useFetchMenuItemsQuery } from '../../services/menuitemApi'; // Import the API hooks
@@ -27,10 +26,25 @@ const MenuComponent = () => {
     };
 
     const handleAddToCart = (item) => {
-        setCartItems(prevItems => [...prevItems, item]);
+        setCartItems(prevItems => {
+            const existingItem = prevItems.find(cartItem => cartItem.id === item._id);
+            if (existingItem) {
+                return prevItems.map(cartItem =>
+                    cartItem.id === item._id
+                        ? { ...cartItem, quantity: (cartItem.quantity || 1) + 1 }
+                        : cartItem
+                );
+            } else {
+                return [...prevItems, { ...item, id: item._id, quantity: 1 }];
+            }
+        });
     };
 
-    const totalAmount = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2);
+    const handleRemoveFromCart = (itemId) => {
+        setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    };
+
+    const totalAmount = cartItems.reduce((total, item) => total + item.price * (item.quantity || 1), 0).toFixed(2);
 
     // Render loading state
     if (isLoading) return <div>Loading...</div>;
@@ -52,12 +66,10 @@ const MenuComponent = () => {
 
     return (
         <>
-
             <div className="flex flex-col lg:flex-row h-auto mx-20">
                 {/* Sidebar */}
                 <div className={`bg-white lg:w-1/6 flex text-right pt-10 lg:block ${isMenuOpen ? 'block' : 'hidden'} lg:static z-10 inset-0 lg:h-96 h-full shadow-lg lg:shadow-none`}>
                     <ul className="flex flex-col p-4 space-y-4">
-                        {/* Display unique categories */}
                         {uniqueCategories.map((categoryName, index) => (
                             <li key={index} className="cursor-pointer text-orange-500 hover:text-orange-700">
                                 {categoryName}
@@ -70,7 +82,6 @@ const MenuComponent = () => {
                 <div className="flex-1 px-10 lg:pl-10 m-10 border-l-2 h-full">
                     {/* Search and Veg Toggle */}
                     <div className="flex items-center justify-between mb-6">
-                        {/* Search Bar */}
                         <input
                             type="text"
                             placeholder="Search here..."
@@ -78,7 +89,6 @@ const MenuComponent = () => {
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        {/* Veg Only Toggle */}
                         <div className="flex items-center space-x-2">
                             <label className="flex items-center cursor-pointer">
                                 <div className="relative">
@@ -109,7 +119,6 @@ const MenuComponent = () => {
                         </div>
                     </div>
 
-                    {/* Menu Items */}
                     <div className="space-y-6 w-full lg:w-1/2">
                         {uniqueCategories.map((categoryName, idx) => (
                             <div key={idx}>
@@ -118,7 +127,7 @@ const MenuComponent = () => {
                                     <div className="absolute bottom-0 left-0 w-full border-b-2 border-dotted border-black" />
                                 </div>
                                 {groupedItems[categoryName]
-                                    .filter(item => !isVegOnly || item.veg) // Filter based on isVegOnly state
+                                    .filter(item => !isVegOnly || item.veg)
                                     .filter(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
                                     .map((item, itemIdx) => (
                                         <div key={itemIdx}>
@@ -152,7 +161,6 @@ const MenuComponent = () => {
                 </div>
             </div>
 
-            {/* Browse Menu Button */}
             <button
                 className="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-5 py-2 border-4 border-white rounded-full shadow-2xl z-20"
                 onClick={toggleMenu}
@@ -160,7 +168,6 @@ const MenuComponent = () => {
                 Browse Menu
             </button>
 
-            {/* Mobile Menu */}
             <div
                 className={`lg:hidden fixed inset-x-0 bottom-0 bg-white shadow-lg z-30 transform transition-transform ${isMenuOpen ? 'translate-y-0' : 'translate-y-full'} h-[35%] rounded-t-2xl overflow-y-auto`}
             >
@@ -178,7 +185,6 @@ const MenuComponent = () => {
                 </ul>
             </div>
 
-            {/* Overlay to close menu */}
             {isMenuOpen && (
                 <div
                     className="lg:hidden fixed inset-0 bg-black opacity-50 z-10"
@@ -198,7 +204,7 @@ const MenuComponent = () => {
             <DrawerComponent 
                 cartItems={cartItems} 
                 totalAmount={totalAmount} 
-                onViewCart={() => console.log("Viewing cart")} 
+                onRemoveFromCart={handleRemoveFromCart} // Pass the remove function if needed
             />
         </>
     );

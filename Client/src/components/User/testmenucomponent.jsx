@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import Navbar from './Navbar';
 import DrawerComponent from './DrawerComponent';
@@ -14,6 +14,11 @@ const MenuComponent = () => {
     // Fetch menu items using the API hook
     const { data: menuItems = [], error, isLoading } = useFetchMenuItemsQuery();
 
+    useEffect(() => {
+        // Load cart items from state or other sources on component mount
+        // This logic can be removed if no persistence is required
+    }, []);
+
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -27,7 +32,14 @@ const MenuComponent = () => {
     };
 
     const handleAddToCart = (item) => {
-        setCartItems(prevItems => [...prevItems, item]);
+        const itemWithId = { ...item, id: item._id }; // Transform item to include 'id'
+        const updatedCartItems = [...cartItems, itemWithId];
+        setCartItems(updatedCartItems);
+    };
+
+    const handleRemoveFromCart = (itemId) => {
+        const updatedCartItems = cartItems.filter(item => item.id !== itemId);
+        setCartItems(updatedCartItems);
     };
 
     const totalAmount = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2);
@@ -52,7 +64,6 @@ const MenuComponent = () => {
 
     return (
         <>
-
             <div className="flex flex-col lg:flex-row h-auto mx-20">
                 {/* Sidebar */}
                 <div className={`bg-white lg:w-1/6 flex text-right pt-10 lg:block ${isMenuOpen ? 'block' : 'hidden'} lg:static z-10 inset-0 lg:h-96 h-full shadow-lg lg:shadow-none`}>

@@ -72,7 +72,7 @@ const Navbar = () => {
       </nav>
 
       {menuOpen && (
-        <div className="fixed inset-y-0 right-0 justify-end bg-black bg-opacity-50 flex z-20">
+        <div className="fixed top-0 inset-y-0 h-fit right-0 justify-end bg-black bg-opacity-50 flex z-20">
           <div className="w-64 bg-white p-6 shadow-md">
             <button onClick={toggleMenu} className="focus:outline-none">
               <IoMdClose size={24} />

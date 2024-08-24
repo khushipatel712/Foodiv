@@ -47,6 +47,9 @@ import CartView from './components/User/CartView';
 import Checkout from './components/User/Checkout';
 import OrderConfirmation from './components/User/OrderConfirmation';
 import HomePage from './components/User/Pages/HomePage';
+import UserLayout from './components/User/Pages/UserLayout';
+import MenuComponent from './components/User/MenuComponent';
+import IndexDbItemComponent from '../src/components/User/IndexDbItemComponent';
 function App() {
   return (
    <RegisterProvider>
@@ -59,12 +62,25 @@ function App() {
           <Route path="*" element={<Footer />} />
         </Route>
 
+        <Route path='/login' element={<LoginForm/>}/>
+        <Route path='/register' element={<Register/>}/>
+
+
+
+     <Route path='/:id' element={<UserLayout/>}>
+      <Route index element={<MenuComponent/>}/>
+      <Route path="user/menu" element={<HomePage/>} />
+      <Route path="user/checkout" element={<CartView/>} />
+      <Route path='user/check' element={<Checkout/>}/>
+      <Route path="user/confirmation" element={<OrderConfirmation/>} />
+     </Route>
 
      
-        <Route path='/:id/user/menu' element={<HomePage/>}/>
-<Route path='/:id/user/cartview' element={<CartView/>}/>
+        {/* <Route path='/:id/user/menu' element={<HomePage/>}/> */}
+{/* <Route path='/:id/user/cartview' element={<CartView/>}/>
 <Route path='/:id/user/checkout' element={<Checkout/>}/>
-<Route path='/:id/user/confirmation' element={<OrderConfirmation/>}/>
+<Route path='/:id/user/confirmation' element={<OrderConfirmation/>}/> */}
+<Route path="indexdb" element={<IndexDbItemComponent/>} /> 
 
 
 
@@ -85,7 +101,7 @@ function App() {
           <Route path="menu/edit-item-menu/:menuItemId" element={<AddMenuItem />} />
           <Route path="account" element={<AdminDetail />} />
         </Route>
-
+      
     
       </Routes>
     </Router>

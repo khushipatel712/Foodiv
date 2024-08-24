@@ -43,7 +43,7 @@ const Navbar = () => {
     return (
         <nav className="fixed top-0 left-0 w-full bg-white shadow-lg z-50 lg:px-28">
             <div className="w-full px-4">
-                <div className="flex justify-between items-center py-4">
+                <div className="flex justify-between items-center py-5">
                     <div className="flex items-center">
                         <img src={logo} alt="Logo" className="w-32 h-auto" />
                     </div>
@@ -75,7 +75,7 @@ const Navbar = () => {
                     </div>
                     <div className="hidden md:flex">
                         <Link to="/register">
-                            <button className="bg-orange-600 text-white px-6 py-3 rounded-3xl hover:bg-white hover:text-orange-600 border border-orange-600">
+                            <button className="bg-orange-500 text-white px-7 font-medium py-3 rounded-3xl hover:bg-white hover:text-orange-500 border border-orange-500">
                                 Register Now
                             </button>
                         </Link>
@@ -116,7 +116,7 @@ const Navbar = () => {
                             </div>
                         ))}
                         <Link to="/register">
-                            <button className="bg-orange-600 text-white px-4 py-2 rounded-3xl hover:bg-white hover:text-orange-600 border border-orange-600">
+                            <button className="bg-orange-500 text-white px-4 py-2 rounded-3xl hover:bg-white hover:text-orange-600 border border-orange-600">
                                 Register Now
                             </button>
                         </Link>

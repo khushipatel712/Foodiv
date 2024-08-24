@@ -1,5 +1,6 @@
 import React from 'react';
 import order from 'D:/Node and React/Foodiv/Client/public/assests/new_order.svg'
+import Menu from './Menu';
 const Dashboard = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-100 min-h-screen">
@@ -58,6 +59,7 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
+   
   );
 };
 

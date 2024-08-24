@@ -55,7 +55,7 @@ const Header = () => {
     }
 
     return (
-        <nav className="w-full bg-white shadow-lg z-50 flex items-center px-4 py-6">
+        <nav className="w-full bg-white shadow-lg z-50 flex items-center px-4  py-6">
             <div className="flex items-center flex-grow">
                 <img src={logo} alt="Logo" className="w-32 h-auto" />
             </div>
