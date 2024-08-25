@@ -8,6 +8,7 @@ const GuestForm = ({ goBack }) => {
 
             <div className='flex flex-row gap-4 items-center'>
                 {/* Back Button */}
+                
                 <div>
                     <button
                         className=" hover:text-blue-700 mb-4"
@@ -16,6 +17,7 @@ const GuestForm = ({ goBack }) => {
                         <FaArrowLeft />
                     </button>
                 </div>
+            
                 <div className="text-lg font-medium mb-4">Contact Information</div>
             </div>
             {/* Guest Form */}

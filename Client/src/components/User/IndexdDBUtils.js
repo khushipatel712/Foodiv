@@ -2,24 +2,26 @@ import { openDB } from 'idb';
 
 // Initialize the IndexedDB database
 const initDB = async () => {
-    const db = await openDB('menuDB', 3, { // Incremented the version to 3
+    const db = await openDB('menuDB', 8, { // Incremented the version to 7
         upgrade(db, oldVersion) {
             if (oldVersion < 1) {
-                // Initial creation of the object store for cart items
                 db.createObjectStore('cartItems', { keyPath: '_id' });
             }
             if (oldVersion < 2) {
-                // Create or update object store for order details
                 if (!db.objectStoreNames.contains('orderDetails')) {
                     db.createObjectStore('orderDetails', { keyPath: 'id' });
                 }
             }
             if (oldVersion < 3) {
-                // Create or update object store for drawer data
                 if (!db.objectStoreNames.contains('drawerData')) {
                     db.createObjectStore('drawerData', { keyPath: 'key' });
                 }
             }
+            // if (oldVersion < 4) {
+            //     if (!db.objectStoreNames.contains('paymentData')) { // Updated object store name
+            //         db.createObjectStore('paymentData', { keyPath: 'key' });
+            //     }
+            // }
         },
     });
     return db;
@@ -53,6 +55,19 @@ export const addOrderTypeToDB = async (orderType) => {
     await db.put('orderDetails', { id, orderType });
 };
 
+// Add payment mode type to IndexedDB
+// export const addPaymentModeTypeToDB = async (paymentMode) => {
+//     const db = await initDB();
+//     const key = 'paymentType'; // Updated key
+//     await db.put('paymentData', { key, paymentMode });
+// };
+
+// // Retrieve payment mode from IndexedDB
+// export const getPaymentModeFromDB = async () => {
+//     const db = await initDB();
+//     const payment = await db.get('paymentData', 'paymentType'); // Updated object store name
+//     return payment ? payment.paymentMode : null;
+// };
 // Retrieve order type from IndexedDB
 export const getOrderTypeFromDB = async () => {
     const db = await initDB();
@@ -63,23 +78,43 @@ export const getOrderTypeFromDB = async () => {
 // Add or update drawer data in IndexedDB
 export const saveDrawerDataToDB = async (data) => {
     const db = await initDB();
-    await db.put('drawerData', { key: 'drawerData', ...data });
+
+    // Retrieve the order type from IndexedDB
+    const orderType = await getOrderTypeFromDB();
+
+    // Combine the drawer data with the order type
+    const drawerDataWithOrderType = {
+        key: 'drawerData',
+        ...data,
+        orderType: orderType || null, // Add orderType to drawerData, default to null if not found
+    };
+
+    // Save the combined data back to IndexedDB
+    await db.put('drawerData', drawerDataWithOrderType);
 };
 
 // Retrieve drawer data from IndexedDB
 export const getDrawerDataFromDB = async () => {
     const db = await initDB();
     const data = await db.get('drawerData', 'drawerData');
-    return data ? { cartItems: data.cartItems, totalAmount: data.totalAmount } : { cartItems: [], totalAmount: 0 };
+    return data ? { cartItems: data.cartItems, totalAmount: data.totalAmount, orderType:data.orderType } : { cartItems: [], totalAmount: 0 , orderType : null};
 };
 
 // Update drawer data in IndexedDB
 export const updateDrawerDataInDB = async (updatedCartItems, updatedTotalAmount) => {
     const db = await initDB();
+
+    // Retrieve the current order type from IndexedDB
+    const orderType = await getOrderTypeFromDB();
+
+    // Create the updated data object with the order type
     const data = {
         key: 'drawerData',
         cartItems: updatedCartItems,
-        totalAmount: updatedTotalAmount
+        totalAmount: updatedTotalAmount,
+        orderType: orderType || null, // Include orderType, default to null if not found
     };
+
+    // Save the updated data back to IndexedDB
     await db.put('drawerData', data);
 };
