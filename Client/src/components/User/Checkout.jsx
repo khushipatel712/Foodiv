@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useLayoutEffect } from 'react';
 import { GrSquare } from "react-icons/gr";
 import GuestForm from './GuestForm';
 import LoginForm from './LoginForm';
 import RegisterModal from './RegisterModal';
-import { getDrawerDataFromDB } from './IndexdDBUtils'; // Import the function to add payment mode
+import Cookies from 'js-cookie'
+import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB } from './IndexdDBUtils'; // Import the function to add payment mode
 
 const Checkout = () => {
     const [formType, setFormType] = useState(null);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [drawerData, setDrawerData] = useState({ cartItems: [], totalAmount: 0, orderType: null });
-    const [paymentMode, setPaymentMode] = useState(null);
+    const [paymentType, setPaymentType] = useState('');
+    
+
+    useEffect(() => {
+      
+        const token = Cookies.get('userToken'); 
+        if (token) {
+            setFormType('guest');
+        }
+    }, []);
 
     // Fetch drawer data from IndexedDB when the component mounts
     useEffect(() => {
@@ -21,16 +31,46 @@ const Checkout = () => {
         fetchDrawerData();
     }, []);
 
-    // Update payment mode in IndexedDB
-    // useEffect(() => {
-    //     if (paymentMode) {
-    //         const savePaymentMode = async () => {
-    //             await addPaymentModeTypeToDB(paymentMode); // Store the payment mode in IndexedDB
-    //         };
-    //         savePaymentMode();
-    //     }
-    // }, [paymentMode]);
+    useEffect(() => {
+        const fetchPaymentType = async () => {
+            try {
+                const { paymentType } = await getPaymentTypeFromDB(); // Get payment mode from IndexedDB
+                // console.log(paymentType)
+                // console.log("Fetched paymentType:", paymentType); // Debug log
+                if(paymentType !=null && paymentType !='' && paymentType != undefined){
+                    
+                    setPaymentType(paymentType); // Update state with the retrieved payment mode
+                }
+            } catch (error) {
+                console.error("Failed to fetch payment type", error);
+            }
+        };
 
+        fetchPaymentType();
+    }, []);
+
+    // Update payment mode in IndexedDB
+    useLayoutEffect(() => {
+       if(paymentType !=null && paymentType !=''){
+           
+           savePaymentType();
+       }
+    }, [paymentType]);
+
+    const savePaymentType = async () => {
+        // console.log(paymentType);
+        if (paymentType !== null) {  // Only save if paymentType is not null
+            await addPaymentTypeToDB(paymentType); 
+        }
+    };
+    
+    const handlePaymentTypeChange = (type) => {
+        // console.log(type);
+        setPaymentType(type);
+        savePaymentType();
+    };
+
+ 
     const handleRegisterClick = () => {
         setIsRegisterModalOpen(true);
     };
@@ -38,10 +78,6 @@ const Checkout = () => {
     const handleCloseRegisterModal = () => {
         setIsRegisterModalOpen(false);
     };
-
-    // const handlePaymentModeChange = (mode) => {
-    //     setPaymentMode(mode);
-    // };
 
     return (
         <>
@@ -117,8 +153,11 @@ const Checkout = () => {
                             type="radio" 
                             id="cashOnDelivery" 
                             name="paymentMode" 
-                            // checked={paymentMode === 'cashOnDelivery'}
-                            // onChange={() => handlePaymentModeChange('cashOnDelivery')}
+                            checked={paymentType === 'cashOnDelivery'}
+                            onChange={() => {
+                            handlePaymentTypeChange('cashOnDelivery')
+                               
+                            }}
                             className="text-orange-500 bg-orange-500" 
                         />
                         <label htmlFor="cashOnDelivery">Cash on Delivery</label>

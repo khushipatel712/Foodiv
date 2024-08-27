@@ -12,7 +12,7 @@ const Navbar = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [profile, setProfile] = useState(null);
-  const [token, setToken] = useState(Cookies.get('token') || '');
+  const [token, setToken] = useState(Cookies.get('userToken') || '');
 
   const { id } = useParams();
   const { data: fetchedProfile, error } = useGetProfileByIdQuery(id);
@@ -39,17 +39,17 @@ const Navbar = () => {
   const handleCloseLoginModal = () => {
     setIsLoginModalOpen(false);
     // Refresh the component by updating state
-    setToken(Cookies.get('token') || '');
+    setToken(Cookies.get('userToken') || '');
   };
 
   const handleCloseRegisterModal = () => {
     setIsRegisterModalOpen(false);
     // Refresh the component by updating state
-    setToken(Cookies.get('token') || '');
+    setToken(Cookies.get('userToken') || '');
   };
 
   const handleLogout = () => {
-    Cookies.remove('token'); // Remove token from cookies
+    Cookies.remove('userToken'); // Remove token from cookies
     setToken(''); // Clear token from state
   };
 
@@ -79,7 +79,8 @@ const Navbar = () => {
             </button>
             <ul className="mt-6 space-y-4">
               <li><a href="#" className="block text-orange-500 hover:text-orange-700">Home</a></li>
-              {!token ? (
+              {!
+              token ? (
                 <>
                   <li>
                     <button

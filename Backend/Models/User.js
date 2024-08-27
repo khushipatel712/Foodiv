@@ -23,11 +23,17 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    mobileNumber: {
+        type: String,
+    },
     isVerified: {
         type: Boolean,
         default: false
     },
-    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true }
+    adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true },
+    // instruction: {
+    //     type: String,
+    // },
 });
 
 // Create and export the User model

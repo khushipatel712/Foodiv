@@ -69,7 +69,7 @@ const RegisterModal = ({ onClose, adminId }) => { // Pass adminId as a prop
 
       if (response.ok) {
         const data = await response.json();
-        Cookies.set('token', data.token); // Set the token in a cookie
+        Cookies.set('userToken', data.token); // Set the token in a cookie
 
         onClose(); // Close the modal after successful registration
       } else {

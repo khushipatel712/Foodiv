@@ -75,6 +75,8 @@ function App() {
       <Route path="user/confirmation" element={<OrderConfirmation/>} />
      </Route>
 
+     <Route path="pricing" element={<SubscriptionPlan/>} /> 
+
      
         {/* <Route path='/:id/user/menu' element={<HomePage/>}/> */}
 {/* <Route path='/:id/user/cartview' element={<CartView/>}/>

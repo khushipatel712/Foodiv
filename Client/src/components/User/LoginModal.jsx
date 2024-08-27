@@ -17,9 +17,11 @@ const LoginModal = ({ onClose, adminId }) => { // Accept adminId as a prop
         body: JSON.stringify({ email, password }), // Pass email and password in the body
       });
 
+
       if (response.ok) {
         const data = await response.json();
-        Cookies.set('token', data.token, { path: '/' }); // Set the token in a cookie
+        // console.log(data);
+        Cookies.set('userToken', data.token, { path: '/' }); // Set the token in a cookie
         onClose(); // Close the modal after successful login
       } else {
         const errorData = await response.json();

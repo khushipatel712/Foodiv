@@ -74,7 +74,7 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-  
+
 
 
 module.exports = { hashPassword, comparePassword, verifyOTPs , otpStore, authenticateToken };

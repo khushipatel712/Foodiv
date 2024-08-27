@@ -182,3 +182,47 @@ exports.login = async (req, res) => {
     }
   };
   
+
+  exports.getUser = async (req, res) => {
+    try {
+        const { adminId } = req.params; // Extract adminId from request params
+        const { id } = req.user; // Extract user ID from token
+
+        // console.log('Requested adminId:', adminId); // Log the adminId being queried
+        // console.log('User ID from token:', id); // Log the user ID from token
+        // console.log('User from token:', req.user);
+
+        // Find the user by adminId and ensure that the user ID from the token matches
+        const user = await User.findOne({ adminId: adminId, _id: id });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Return the user details
+        res.json({
+            id: user._id, // Ensure you are using _id for MongoDB documents
+            adminId: user.adminId,
+            email: user.email,
+            name: user.name,
+            mobile: user.mobile,
+            instruction: user.instruction,
+        });
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
+    }
+};
+
+exports.logout = async (req, res) => {
+    try {
+    
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+   
+        console.error('Logout error:', error);
+        
+
+        res.status(500).json({ message: 'An error occurred during logout' });
+    }
+};

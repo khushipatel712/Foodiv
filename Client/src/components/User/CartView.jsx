@@ -72,6 +72,7 @@ const CartView = () => {
         }
     };
 
+    
     return (
         <div className="lg:px-40 px-10 pt-10 flex flex-col gap-8">
             <div className="flex justify-between items-start">

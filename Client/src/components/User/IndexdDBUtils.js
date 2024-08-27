@@ -2,8 +2,15 @@ import { openDB } from 'idb';
 
 // Initialize the IndexedDB database
 const initDB = async () => {
-    const db = await openDB('menuDB', 8, { // Incremented the version to 7
+    const db = await openDB('menuDB', 9, { 
         upgrade(db, oldVersion) {
+            try{
+
+           
+            db.createObjectStore('paymentDetail1s',{ keyPath: '_id' });
+        }catch(err){
+            console.log(err);
+        }
             if (oldVersion < 1) {
                 db.createObjectStore('cartItems', { keyPath: '_id' });
             }
@@ -17,11 +24,12 @@ const initDB = async () => {
                     db.createObjectStore('drawerData', { keyPath: 'key' });
                 }
             }
-            // if (oldVersion < 4) {
-            //     if (!db.objectStoreNames.contains('paymentData')) { // Updated object store name
-            //         db.createObjectStore('paymentData', { keyPath: 'key' });
-            //     }
-            // }
+            if (oldVersion < 9) {
+                if (!db.objectStoreNames.contains('paymentMode')) { 
+                    db.createObjectStore('paymentMode', { keyPath: 'key' });
+                }
+            }
+        
         },
     });
     return db;
@@ -56,18 +64,21 @@ export const addOrderTypeToDB = async (orderType) => {
 };
 
 // Add payment mode type to IndexedDB
-// export const addPaymentModeTypeToDB = async (paymentMode) => {
-//     const db = await initDB();
-//     const key = 'paymentType'; // Updated key
-//     await db.put('paymentData', { key, paymentMode });
-// };
+export const addPaymentTypeToDB = async (paymentType) => {
+    const db = await initDB();
+    const key = 'paymentType'; // Updated key
+    await db.put('paymentMode', { key, paymentType });
+};
 
 // // Retrieve payment mode from IndexedDB
-// export const getPaymentModeFromDB = async () => {
-//     const db = await initDB();
-//     const payment = await db.get('paymentData', 'paymentType'); // Updated object store name
-//     return payment ? payment.paymentMode : null;
-// };
+export const getPaymentTypeFromDB = async () => {
+    const db = await initDB();
+    const payment = await db.get('paymentMode', 'paymentType');
+    // console.log(payment) // Updated object store name
+    return payment ;
+};
+
+
 // Retrieve order type from IndexedDB
 export const getOrderTypeFromDB = async () => {
     const db = await initDB();
@@ -82,11 +93,14 @@ export const saveDrawerDataToDB = async (data) => {
     // Retrieve the order type from IndexedDB
     const orderType = await getOrderTypeFromDB();
 
+    const paymentType = await getPaymentTypeFromDB();
+
     // Combine the drawer data with the order type
     const drawerDataWithOrderType = {
         key: 'drawerData',
         ...data,
-        orderType: orderType || null, // Add orderType to drawerData, default to null if not found
+        orderType: orderType || null,
+        paymentType: paymentType || null, // Add orderType to drawerData, default to null if not found
     };
 
     // Save the combined data back to IndexedDB
