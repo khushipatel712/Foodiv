@@ -1,10 +1,10 @@
-import React, { useState, useEffect,useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { GrSquare } from "react-icons/gr";
 import GuestForm from './GuestForm';
 import LoginForm from './LoginForm';
 import RegisterModal from './RegisterModal';
-import Cookies from 'js-cookie'
-import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB, getContactInformationFromDB, updateDrawerDataInDB } from './IndexdDBUtils'; // Import the function to add payment mode
+import Cookies from 'js-cookie';
+import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB, getContactInformationFromDB, updateDrawerDataInDB } from './IndexdDBUtils';
 
 const Checkout = () => {
     const [formType, setFormType] = useState(null);
@@ -13,10 +13,8 @@ const Checkout = () => {
     const [paymentType, setPaymentType] = useState('');
     const [contactInfo, setContactInfo] = useState(null);
     
-
     useEffect(() => {
-      
-        const token = Cookies.get('userToken'); 
+        const token = Cookies.get('userToken');
         if (token) {
             setFormType('guest');
         }
@@ -32,77 +30,62 @@ const Checkout = () => {
         fetchDrawerData();
     }, []);
 
-    useEffect(() => {
-        const fetchPaymentType = async () => {
-            try {
-                const { paymentType } = await getPaymentTypeFromDB(); // Get payment mode from IndexedDB
-                // console.log(paymentType)
-                // console.log("Fetched paymentType:", paymentType); // Debug log
-                if(paymentType !=null && paymentType !='' && paymentType != undefined){
-                    
-                    setPaymentType(paymentType);
-                    console.log(paymentType) // Update state with the retrieved payment mode
-                }
-            } catch (error) {
-                console.error("Failed to fetch payment type", error);
-            }
-        };
-
-        fetchPaymentType();
-    }, []);
-
-    // Update payment mode in IndexedDB
     useLayoutEffect(() => {
        if(paymentType !=null && paymentType !=''){
-           
            savePaymentType();
        }
     }, [paymentType]);
 
-
-
-    useEffect(() => {
-        const fetchContactInformation = async () => {
-            try {
-                const contactInfo = await getContactInformationFromDB(); // Fetch contact info from IndexedDB
-                setContactInfo(contactInfo);
-                console.log(contactInfo) // Set the retrieved contact info in state
-            } catch (error) {
-                console.error("Failed to fetch contact information", error);
-            }
-        };
-    
-        fetchContactInformation();
-    }, []);
-
     const savePaymentType = async () => {
-        // console.log(paymentType);
-        if (paymentType !== null) {  // Only save if paymentType is not null
-            await addPaymentTypeToDB(paymentType); 
+        if (paymentType !== null) {
+            await addPaymentTypeToDB(paymentType);
         }
     };
     
     const handlePaymentTypeChange = (type) => {
-        // console.log(type);
         setPaymentType(type);
         savePaymentType();
     };
 
+    const fetchPaymentType = async () => {
+        try {
+            const { paymentType } = await getPaymentTypeFromDB();
+            if (paymentType != null && paymentType !== '' && paymentType !== undefined) {
+                setPaymentType(paymentType);
+            }
+        } catch (error) {
+            console.error("Failed to fetch payment type", error);
+        }
+    };
+
+    const fetchContactInformation = async () => {
+        try {
+            const contactInfo = await getContactInformationFromDB();
+            setContactInfo(contactInfo);
+        } catch (error) {
+            console.error("Failed to fetch contact information", error);
+        }
+    };
+
     const handlePlaceOrder = async () => {
         try {
+            // Fetch payment type and contact information when placing the order
+            await fetchPaymentType();
+            await fetchContactInformation();
+
             if (paymentType === '') {
                 throw new Error('Please select a payment method.');
             }
-    
+
             await updateDrawerDataInDB(drawerData.cartItems, drawerData.totalAmount);
-    
+
             // Additional logic to handle after updating the drawer data, like navigating to a confirmation page
             console.log('Order placed successfully!');
         } catch (error) {
             console.error("Failed to place the order", error.message || error);
         }
     };
- 
+
     const handleRegisterClick = () => {
         setIsRegisterModalOpen(true);
     };
@@ -186,10 +169,7 @@ const Checkout = () => {
                             id="cashOnDelivery" 
                             name="paymentMode" 
                             checked={paymentType === 'cashOnDelivery'}
-                            onChange={() => {
-                            handlePaymentTypeChange('cashOnDelivery')
-                               
-                            }}
+                            onChange={() => handlePaymentTypeChange('cashOnDelivery')}
                             className="text-orange-500 bg-orange-500" 
                         />
                         <label htmlFor="cashOnDelivery">Cash on Delivery</label>
@@ -197,12 +177,12 @@ const Checkout = () => {
 
                     {/* Place Order Button */}
                     <button
-    onClick={handlePlaceOrder}
-    disabled={paymentType !== 'cashOnDelivery'}
-    className={`w-full py-2 rounded-md text-white ${paymentType === 'cashOnDelivery' ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
->
-    Place Order
-</button>
+                        onClick={handlePlaceOrder}
+                        disabled={paymentType !== 'cashOnDelivery'}
+                        className={`w-full py-2 rounded-md text-white ${paymentType === 'cashOnDelivery' ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                    >
+                        Place Order
+                    </button>
                 </div>
             </div>
             {isRegisterModalOpen && (
