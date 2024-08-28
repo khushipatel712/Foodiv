@@ -88,16 +88,22 @@ const AddMenuItem = () => {
     setSelectedSubCategory('');
 
     if (categoryId) {
-      // Fetch subcategories only if the category is valid
+   
       try {
         const response = await axios.get(`http://localhost:5001/api/subcategories/${categoryId}`);
         if (response.data.length > 0) {
           setSubCategories(response.data);
         } else {
-          setSubCategories([]); // No subcategories
+          setSubCategories([]); 
+          console.log(`No subcategories available for category ID: ${categoryId}`);
         }
       } catch (error) {
-        console.error("Error fetching subcategories:", error);
+        if (error.response && error.response.status === 404) {
+          console.log(`URL not found for category ID: ${categoryId}`);
+          
+        } else {
+          console.error("Error fetching subcategories:", error);
+        }
       }
     } else {
       setSubCategories([]);
@@ -150,6 +156,7 @@ const AddMenuItem = () => {
       console.error("Error updating menu item:", error.response?.data || error.message);
     }
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">

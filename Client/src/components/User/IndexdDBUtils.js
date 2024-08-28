@@ -2,7 +2,7 @@ import { openDB } from 'idb';
 
 // Initialize the IndexedDB database
 const initDB = async () => {
-    const db = await openDB('menuDB', 9, { 
+    const db = await openDB('menuDB', 11, { 
         upgrade(db, oldVersion) {
             try{
 
@@ -29,7 +29,19 @@ const initDB = async () => {
                     db.createObjectStore('paymentMode', { keyPath: 'key' });
                 }
             }
-        
+
+            if (oldVersion < 10) {
+                if (!db.objectStoreNames.contains('contactInformation')) {
+                    db.createObjectStore('contactInformation', { keyPath: 'id' });
+                }
+            }
+
+            // if(oldVersion <10){
+            //     if (!db.objectStoreNames.contains('contactInformation')) {
+            //         db.createObjectStore('contactInformation', { keyPath: 'key' }); 
+            //     }
+            // }
+            
         },
     });
     return db;
@@ -49,6 +61,22 @@ export const getItemsFromDB = async () => {
     const db = await initDB();
     return db.getAll('cartItems');
 };
+
+export const updateItemInDB = async (item) => {
+    const db = await initDB();
+    if (!item._id) {
+        throw new Error('Item must have an _id property');
+    }
+
+    // Check if the item exists in the database before updating
+    const existingItem = await db.get('cartItems', item._id);
+    if (!existingItem) {
+        throw new Error(`Item with _id ${item._id} does not exist`);
+    }
+
+    await db.put('cartItems', item);  // Updates the item with the same _id
+};
+
 
 // Remove an item from IndexedDB
 export const removeItemFromDB = async (itemId) => {
@@ -90,23 +118,23 @@ export const getOrderTypeFromDB = async () => {
 export const saveDrawerDataToDB = async (data) => {
     const db = await initDB();
 
-    // Retrieve the order type from IndexedDB
+    // Retrieve the order type, payment type, and contact info from IndexedDB
     const orderType = await getOrderTypeFromDB();
-
     const paymentType = await getPaymentTypeFromDB();
+    const contactInfo = await getContactInformationFromDB();
 
-    // Combine the drawer data with the order type
+    // Combine the drawer data with the order type, payment type, and contact info
     const drawerDataWithOrderType = {
         key: 'drawerData',
         ...data,
-        orderType: orderType || null,
-        paymentType: paymentType || null, // Add orderType to drawerData, default to null if not found
+        orderType: orderType || null, // Default to null if orderType is not found
+        paymentType: paymentType || null, // Default to null if paymentType is not found
+        contactInfo: contactInfo || null, // Default to null if contactInfo is not found
     };
 
     // Save the combined data back to IndexedDB
     await db.put('drawerData', drawerDataWithOrderType);
 };
-
 // Retrieve drawer data from IndexedDB
 export const getDrawerDataFromDB = async () => {
     const db = await initDB();
@@ -118,17 +146,34 @@ export const getDrawerDataFromDB = async () => {
 export const updateDrawerDataInDB = async (updatedCartItems, updatedTotalAmount) => {
     const db = await initDB();
 
-    // Retrieve the current order type from IndexedDB
+    // Retrieve the current order type, payment type, and contact info from IndexedDB
     const orderType = await getOrderTypeFromDB();
+    const paymentType = await getPaymentTypeFromDB();
+    const contactInfo = await getContactInformationFromDB();
 
-    // Create the updated data object with the order type
+    // Create the updated data object with the order type, payment type, and contact info
     const data = {
         key: 'drawerData',
         cartItems: updatedCartItems,
         totalAmount: updatedTotalAmount,
-        orderType: orderType || null, // Include orderType, default to null if not found
+        orderType: orderType , // Default to null if orderType is not found
+        paymentType: paymentType , // Default to null if paymentType is not found
+        contactInfo: contactInfo  // Default to null if contactInfo is not found
     };
 
     // Save the updated data back to IndexedDB
     await db.put('drawerData', data);
+};
+
+
+export const saveContactInformationToDB = async (contactInfo) => {
+    const db = await initDB();
+  const id='contactInfo'
+    await db.put('contactInformation', {id, contactInfo});
+};
+
+
+export const getContactInformationFromDB = async () => {
+    const db = await initDB();
+    return db.get('contactInformation', 'contactInfo');
 };

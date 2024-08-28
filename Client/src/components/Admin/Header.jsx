@@ -11,26 +11,26 @@ const Header = () => {
     const token = Cookies.get('token');
     const [isOpen, setIsOpen] = useState(false);
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-    
+
     const dispatch = useDispatch();
     const online = useSelector((state) => state.admin.online);
 
-  
-    
+
+
     const { data: profile, isLoading, isError } = useGetProfileQuery(token);
 
     const [updateStatus, { isLoading: isUpdatingStatus }] = useUpdateStatusMutation(token);
 
     const handleToggle = async () => {
         try {
-       
+
             dispatch(toggleOnlineStatus());
 
 
             await updateStatus({ online: !online }).unwrap();
         } catch (error) {
             console.error('Failed to update status:', error);
-        
+
             dispatch(toggleOnlineStatus());
         }
     };
@@ -71,7 +71,7 @@ const Header = () => {
                             <span className="text-gray-500">Offline</span>
                             <FaToggleOff size={24} className="text-gray-500" />
                         </>
-                       
+
                     ) : (
                         <>
                             <span className="text-green-500">Online</span>
@@ -108,11 +108,11 @@ const Header = () => {
                         </div>
                     )}
                 </div>
-                <div className="md:hidden flex items-center text-orange-600">
+                {/* <div className="md:hidden flex items-center text-orange-600">
                     <button onClick={toggleMenu}>
                         {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
                     </button>
-                </div>
+                </div> */}
             </div>
             {isOpen && (
                 <div className="md:hidden bg-white shadow-lg w-auto absolute top-full left-0 right-0">

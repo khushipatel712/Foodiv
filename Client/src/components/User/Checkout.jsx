@@ -4,13 +4,14 @@ import GuestForm from './GuestForm';
 import LoginForm from './LoginForm';
 import RegisterModal from './RegisterModal';
 import Cookies from 'js-cookie'
-import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB } from './IndexdDBUtils'; // Import the function to add payment mode
+import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB, getContactInformationFromDB, updateDrawerDataInDB } from './IndexdDBUtils'; // Import the function to add payment mode
 
 const Checkout = () => {
     const [formType, setFormType] = useState(null);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [drawerData, setDrawerData] = useState({ cartItems: [], totalAmount: 0, orderType: null });
     const [paymentType, setPaymentType] = useState('');
+    const [contactInfo, setContactInfo] = useState(null);
     
 
     useEffect(() => {
@@ -39,7 +40,8 @@ const Checkout = () => {
                 // console.log("Fetched paymentType:", paymentType); // Debug log
                 if(paymentType !=null && paymentType !='' && paymentType != undefined){
                     
-                    setPaymentType(paymentType); // Update state with the retrieved payment mode
+                    setPaymentType(paymentType);
+                    console.log(paymentType) // Update state with the retrieved payment mode
                 }
             } catch (error) {
                 console.error("Failed to fetch payment type", error);
@@ -57,6 +59,22 @@ const Checkout = () => {
        }
     }, [paymentType]);
 
+
+
+    useEffect(() => {
+        const fetchContactInformation = async () => {
+            try {
+                const contactInfo = await getContactInformationFromDB(); // Fetch contact info from IndexedDB
+                setContactInfo(contactInfo);
+                console.log(contactInfo) // Set the retrieved contact info in state
+            } catch (error) {
+                console.error("Failed to fetch contact information", error);
+            }
+        };
+    
+        fetchContactInformation();
+    }, []);
+
     const savePaymentType = async () => {
         // console.log(paymentType);
         if (paymentType !== null) {  // Only save if paymentType is not null
@@ -70,6 +88,20 @@ const Checkout = () => {
         savePaymentType();
     };
 
+    const handlePlaceOrder = async () => {
+        try {
+            if (paymentType === '') {
+                throw new Error('Please select a payment method.');
+            }
+    
+            await updateDrawerDataInDB(drawerData.cartItems, drawerData.totalAmount);
+    
+            // Additional logic to handle after updating the drawer data, like navigating to a confirmation page
+            console.log('Order placed successfully!');
+        } catch (error) {
+            console.error("Failed to place the order", error.message || error);
+        }
+    };
  
     const handleRegisterClick = () => {
         setIsRegisterModalOpen(true);
@@ -164,9 +196,13 @@ const Checkout = () => {
                     </div>
 
                     {/* Place Order Button */}
-                    <button className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600">
-                        Place Order
-                    </button>
+                    <button
+    onClick={handlePlaceOrder}
+    disabled={paymentType !== 'cashOnDelivery'}
+    className={`w-full py-2 rounded-md text-white ${paymentType === 'cashOnDelivery' ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 cursor-not-allowed'}`}
+>
+    Place Order
+</button>
                 </div>
             </div>
             {isRegisterModalOpen && (

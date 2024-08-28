@@ -3,23 +3,22 @@ import { FaArrowLeft } from "react-icons/fa6";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { saveContactInformationToDB, getContactInformationFromDB } from './IndexdDBUtils'; // Adjust the path as necessary
 
 const GuestForm = ({ goBack }) => {
     const [showBackButton, setShowBackButton] = useState(false);
     const [userData, setUserData] = useState({
         name: '',
-        // mobile: '',
+        mobile: '',
         email: '',
-        // instruction: '',
+        instruction: '',
     });
 
     const { id } = useParams();
-    const adminId=id
-    // console.log("adminId:",id)
+    const adminId = id;
 
     useEffect(() => {
         const token = Cookies.get('userToken');
-        // console.log(token)
 
         if (!token) {
             setShowBackButton(true);
@@ -28,21 +27,49 @@ const GuestForm = ({ goBack }) => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:5001/api/user/get/${id}`, {
-                    headers: {
-                        Authorization:token, 
-                    },
-                });
-
-                const { name, mobile, email } = response.data;
-                setUserData({ name, mobile, email });
+                // Check IndexedDB first
+                const storedData = await getContactInformationFromDB();
+                
+                if (storedData) {
+                    // If data exists in IndexedDB, use it
+                    const { name, mobile, email, instruction } = storedData;
+                    setUserData({ name, mobile, email, instruction });
+                } else {
+                  
+                    const response = await axios.get(`http://localhost:5001/api/user/get/${id}`, {
+                        headers: {
+                            Authorization: token,
+                        },
+                    });
+    
+                    const { name, mobile, email } = response.data;
+                    const newUserData = { name, mobile, email, instruction: '' };
+                    setUserData(newUserData);
+    
+                    // Save fetched data to IndexedDB
+                    await saveContactInformationToDB(newUserData);
+                }
             } catch (error) {
                 console.error("Failed to fetch user data:", error);
             }
         };
-
+    
         fetchUserData();
     }, [adminId]);
+
+    // Handle form change and update IndexedDB
+    const handleChange = async (e) => {
+        const { id, value } = e.target;
+        const updatedUserData = { ...userData, [id]: value };
+    
+        setUserData(updatedUserData);
+    
+        try {
+            await saveContactInformationToDB(updatedUserData); // Update IndexedDB
+        } catch (error) {
+            console.error("Failed to save contact information:", error);
+        }
+    };
 
     return (
         <div className="w-full lg:w-[70%] bg-white p-5 lg:p-10 rounded-lg shadow">
@@ -69,8 +96,8 @@ const GuestForm = ({ goBack }) => {
                                 id="name"
                                 className="w-full px-3 py-2 border rounded text-sm"
                                 placeholder="Enter your name"
-                                value={userData.name}
-                                onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+                                value={userData.name || ''}
+                                onChange={handleChange}
                             />
                         </div>
                         <div className='w-1/2'>
@@ -80,8 +107,8 @@ const GuestForm = ({ goBack }) => {
                                 id="mobile"
                                 className="w-full text-sm px-3 py-2 border rounded"
                                 placeholder="Enter your mobile number"
-                                value={userData.mobile}
-                                onChange={(e) => setUserData({ ...userData, mobile: e.target.value })}
+                                value={userData.mobile || ''}
+                                onChange={handleChange}
                             />
                         </div>
                     </div>
@@ -93,8 +120,8 @@ const GuestForm = ({ goBack }) => {
                         id="email"
                         className="w-full px-3 py-2 text-sm border rounded"
                         placeholder="Enter your email"
-                        value={userData.email}
-                        onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                        value={userData.email || ''}
+                        onChange={handleChange}
                     />
                 </div>
                 <div className="mb-4">
@@ -104,8 +131,8 @@ const GuestForm = ({ goBack }) => {
                         id="instruction"
                         className="w-full px-3 py-2 border rounded text-sm"
                         placeholder=' "Any suggestion? we will pass on... '
-                        value={userData.instruction}
-                        onChange={(e) => setUserData({ ...userData, instruction: e.target.value })}
+                        value={userData.instruction || ''}
+                        onChange={handleChange}
                     />
                 </div>
             </form>
