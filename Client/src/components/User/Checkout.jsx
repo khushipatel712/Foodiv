@@ -4,7 +4,8 @@ import GuestForm from './GuestForm';
 import LoginForm from './LoginForm';
 import RegisterModal from './RegisterModal';
 import Cookies from 'js-cookie';
-import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB, getContactInformationFromDB, updateDrawerDataInDB } from './IndexdDBUtils';
+import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB, getContactInformationFromDB, updateDrawerDataInDB, clearMultipleStoresFromDB, getOrderTypeFromDB } from './IndexdDBUtils';
+import axios from 'axios';
 
 const Checkout = () => {
     const [formType, setFormType] = useState(null);
@@ -79,12 +80,27 @@ const Checkout = () => {
 
             await updateDrawerDataInDB(drawerData.cartItems, drawerData.totalAmount);
 
+            try{
+                getDrawerDataFromDB();
+                const contact=await getContactInformationFromDB();
+                const paymentType= await getPaymentTypeFromDB();
+                const orderType= await getOrderTypeFromDB();
+                // console.log(contact)
+                const data=await getDrawerDataFromDB();
+                await axios.post('http://localhost:5001/api/userorder',{contact,data, paymentType, orderType })
+            }catch(err){
+                console.log(err);
+            }
             // Additional logic to handle after updating the drawer data, like navigating to a confirmation page
             console.log('Order placed successfully!');
+
+            // await clearMultipleStoresFromDB(['contactInformation', 'drawerData', 'orderDetails', 'paymentMode']);
         } catch (error) {
             console.error("Failed to place the order", error.message || error);
         }
     };
+
+    console.log(drawerData)
 
     const handleRegisterClick = () => {
         setIsRegisterModalOpen(true);

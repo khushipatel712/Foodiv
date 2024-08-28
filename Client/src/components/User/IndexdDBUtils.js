@@ -161,3 +161,36 @@ export const getContactInformationFromDB = async () => {
     const db = await initDB();
     return db.get('contactInformation', 'contactInfo');
 };
+
+export const clearMultipleStoresFromDB = async (storeNames) => {
+    const request = indexedDB.open('your-database-name', 1); // Update with your database name and version
+
+    return new Promise((resolve, reject) => {
+        request.onsuccess = (event) => {
+            const db = event.target.result;
+
+            const clearPromises = storeNames.map(storeName => {
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([storeName], 'readwrite');
+                    const objectStore = transaction.objectStore(storeName);
+                    const clearRequest = objectStore.clear();
+
+                    clearRequest.onsuccess = () => {
+                        resolve();
+                    };
+                    clearRequest.onerror = (event) => {
+                        reject(event.target.error);
+                    };
+                });
+            });
+
+            Promise.all(clearPromises)
+                .then(() => resolve())
+                .catch(reject);
+        };
+
+        request.onerror = (event) => {
+            reject(event.target.error);
+        };
+    });
+};
