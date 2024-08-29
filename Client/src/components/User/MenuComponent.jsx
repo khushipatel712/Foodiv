@@ -86,7 +86,7 @@ const MenuComponent = () => {
 
     return (
         <>
-            <div className="flex flex-col lg:flex-row h-auto mx-20">
+            <div className="flex flex-col lg:flex-row h-auto sm:mx-20 mx-1">
                 {/* Sidebar */}
                 <div className={`bg-white lg:w-1/6 flex text-right pt-10 lg:block ${isMenuOpen ? 'block' : 'hidden'} lg:static z-10 inset-0 lg:h-96 h-full shadow-lg lg:shadow-none`}>
                     <ul className="flex flex-col p-4 space-y-4">
@@ -99,13 +99,13 @@ const MenuComponent = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 px-10 lg:pl-10 m-10 border-l-2 h-full">
+                <div className="flex-1 px-1 sm:px-7 md:px-10 lg:pl-10 m-10 sm:border-l-2 h-full">
                     {/* Search and Veg Toggle */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center sm:justify-between mb-6 space-x-2 ">
                         <input
                             type="text"
                             placeholder="Search here..."
-                            className="border border-gray-300 rounded-md p-[6px] w-full lg:w-1/3"
+                            className="border text-sm sm:text-base border-gray-300 rounded-md sm:p-[6px] p-1 w-full lg:w-1/3"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -119,17 +119,17 @@ const MenuComponent = () => {
                                         onChange={toggleVegOnly}
                                     />
                                     <div
-                                        className="flex items-center space-x-2 cursor-pointer"
+                                        className="flex items-center sm:space-x-2 cursor-pointer"
                                         onClick={toggleVegOnly}
                                     >
                                         {isVegOnly ? (
                                             <>
-                                                <span className="text-green-500">Veg Only</span>
+                                                <span className="text-green-500 text-sm sm:text-base">Veg Only</span>
                                                 <FaToggleOn size={24} className="text-green-500" />
                                             </>
                                         ) : (
                                             <>
-                                                <span className="text-gray-500">Veg Only</span>
+                                                <span className="text-gray-500 text-sm sm:text-base">Veg Only</span>
                                                 <FaToggleOff size={24} className="text-gray-500" />
                                             </>
                                         )}
@@ -188,7 +188,7 @@ const MenuComponent = () => {
                                                         )}
                                                     </div>
                                                     <button
-                                                        className="text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white px-6 text-xs py-2 rounded"
+                                                        className="text-orange-600 border-2 border-orange-500 hover:bg-orange-500 hover:text-white sm:px-6 text-xs sm:py-2 px-3 py-1 rounded"
                                                         onClick={() => handleAddToCart(item)}
                                                     >
                                                         ADD
@@ -213,7 +213,7 @@ const MenuComponent = () => {
             <div
                 className={`lg:hidden fixed inset-x-0 bottom-0 bg-white shadow-lg z-30 transform transition-transform ${isMenuOpen ? 'translate-y-0' : 'translate-y-full'} h-[35%] rounded-t-2xl overflow-y-auto`}
             >
-                <div className="flex justify-end p-4">
+                <div className="flex justify-end px-3 py-1">
                     <button onClick={handleMenuClick} className="text-gray-500 text-xl">
                         &times;
                     </button>

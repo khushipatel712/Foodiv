@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { GrSquare } from "react-icons/gr";
+import { replace, useNavigate } from 'react-router-dom';
 import GuestForm from './GuestForm';
 import LoginForm from './LoginForm';
 import RegisterModal from './RegisterModal';
 import Cookies from 'js-cookie';
 import { getDrawerDataFromDB, addPaymentTypeToDB, getPaymentTypeFromDB, getContactInformationFromDB, updateDrawerDataInDB, clearMultipleStoresFromDB, getOrderTypeFromDB } from './IndexdDBUtils';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const Checkout = () => {
     const [formType, setFormType] = useState(null);
@@ -13,6 +15,9 @@ const Checkout = () => {
     const [drawerData, setDrawerData] = useState({ cartItems: [], totalAmount: 0, orderType: null });
     const [paymentType, setPaymentType] = useState('');
     const [contactInfo, setContactInfo] = useState(null);
+    const {id}=useParams()
+    const navigate =useNavigate();
+    // console.log(id);
     
     useEffect(() => {
         const token = Cookies.get('userToken');
@@ -81,18 +86,39 @@ const Checkout = () => {
             await updateDrawerDataInDB(drawerData.cartItems, drawerData.totalAmount);
 
             try{
-                getDrawerDataFromDB();
+                
                 const contact=await getContactInformationFromDB();
+
+                // console.log("getcontact:",contact)
+
+             
+    if (contact==undefined) {
+        alert("Name and email are required.");
+        return; 
+    }
+
+    if(!contact.contactInfo.name || !contact.contactInfo.mobile ){
+        alert("Name and Mobile Number are required");
+        return;
+    }
                 const paymentType= await getPaymentTypeFromDB();
+                if (paymentType === '') {
+                    alert('Please select a payment method.');
+                }
+
                 const orderType= await getOrderTypeFromDB();
-                // console.log(contact)
+                if(orderType === ''){
+                    alert('Please select a payment method.'); 
+                }
+
                 const data=await getDrawerDataFromDB();
-                await axios.post('http://localhost:5001/api/userorder',{contact,data, paymentType, orderType })
+                await axios.post('http://localhost:5001/api/userorder',{ cartItem:data, contactInfo:contact, paymentInfo:paymentType, OrderDetail:orderType, adminId:id })
             }catch(err){
                 console.log(err);
             }
             // Additional logic to handle after updating the drawer data, like navigating to a confirmation page
             console.log('Order placed successfully!');
+            navigate(`/${id}/user/confirmation`);
 
             // await clearMultipleStoresFromDB(['contactInformation', 'drawerData', 'orderDetails', 'paymentMode']);
         } catch (error) {
@@ -100,7 +126,7 @@ const Checkout = () => {
         }
     };
 
-    console.log(drawerData)
+    // console.log(drawerData)
 
     const handleRegisterClick = () => {
         setIsRegisterModalOpen(true);
@@ -144,7 +170,7 @@ const Checkout = () => {
                     <LoginForm goBack={() => setFormType(null)} />
                 )}
                 {/* Bill Summary Section */}
-                <div className="w-full lg:w-[50%] mt-10 lg:mt-0 lg:ml-10 bg-white p-6">
+                <div className="w-full lg:w-[50%] mt-10 lg:mt-0 lg:ml-10 bg-white p-3 lg:p-6">
 
                     <div className='border-2 px-3 py-2 mb-4'>
                         {drawerData.cartItems.map((item, index) => (
@@ -158,9 +184,9 @@ const Checkout = () => {
                         ))}
                     </div>
 
-                    <div className='px-3 py-2 mb-4 shadow-lg'>
+                    <div className='px-3 py-2 mb-5 shadow-lg'>
                         <div className="flex justify-between items-center">
-                            <span className="text-gray-600 text-sm">Items Total</span>
+                            <span className="text-gray-600 text-base">Items Total</span>
                             <span className="font-semibold">₹{drawerData.totalAmount.toFixed(2)}</span>
                         </div>
                         <hr className='w-full bg-slate-300 my-2'></hr>

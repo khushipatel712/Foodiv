@@ -64,7 +64,7 @@ function App() {
 
         <Route path='/login' element={<LoginForm/>}/>
         <Route path='/register' element={<Register/>}/>
-
+        <Route path="/:id/user/confirmation" element={<OrderConfirmation/>} />
 
 
      <Route path='/:id' element={<UserLayout/>}>
@@ -72,10 +72,10 @@ function App() {
       <Route path="user/menu" element={<HomePage/>} />
       <Route path="user/checkout" element={<CartView/>} />
       <Route path='user/check' element={<Checkout/>}/>
-      <Route path="user/confirmation" element={<OrderConfirmation/>} />
      </Route>
 
      <Route path="pricing" element={<SubscriptionPlan/>} /> 
+    
 
      
         {/* <Route path='/:id/user/menu' element={<HomePage/>}/> */}

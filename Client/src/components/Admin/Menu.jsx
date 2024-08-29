@@ -73,11 +73,11 @@ const Menu = () => {
     if (menuItemsError) return <div>Error fetching menu items</div>;
 
     return (
-        <div className="max-w-6xl mx-auto p-6 bg-gray-100 shadow-md">
+        <div className="max-w-6xl mx-auto md:p-6 p-2 bg-gray-100 shadow-md">
             <div className="flex justify-between items-center mb-2">
-                <div className="text-xl text-gray-700 font-medium">Standard Menu</div>
+                <div className="md:text-xl sm:text-lg text-base text-gray-700 font-medium">Standard Menu</div>
                 <Link to='addmenuitem'>
-                    <button className="bg-blue-500 text-white lg:px-2 lg:py-1 lg:text-base text-sm px-1 py-[2px] rounded-lg">+ Add Menu Item</button>
+                    <button className="bg-blue-500 text-white lg:px-2 lg:py-1 lg:text-base sm:text-sm text-xs px-1 py-[2px] rounded-lg">+ Add Menu Item</button>
                 </Link>
             </div>
 
@@ -85,14 +85,14 @@ const Menu = () => {
                 {categories.map(category => (
                     <div
                         key={category._id} 
-                        className='flex items-center px-4 py-[6px] border rounded-2xl hover:bg-black hover:text-white w-fit'
+                        className='flex items-center text-sm sm:text-base px-4 py-[6px] border rounded-2xl hover:bg-black hover:text-white w-fit'
                     >
                         <span>{category.categoryName}</span>
                         <button
                             onClick={() => handleDeleteCategory(category._id)}
                             className="ml-2 text-red-500 hover:text-white "
                         >
-                            <MdDelete className='size-5 hover:text-white'/>
+                            <MdDelete className='sm:size-5 size-4 hover:text-white'/>
                         </button>
                     </div>
                 ))}
@@ -102,7 +102,7 @@ const Menu = () => {
                 {categories.map(category => (
                     <div key={category._id}> 
                         <div className='flex flex-row gap-5 items-center '>
-                            <div className="text-xl font-semibold mb-4">{category.categoryName}</div>
+                            <div className="md:text-xl text-lg font-semibold mb-4">{category.categoryName}</div>
                             <button
                                 onClick={() => toggleEnableCategory(category._id)} 
                                 className="mb-4"
@@ -121,7 +121,7 @@ const Menu = () => {
                                 .map(item => (
                                     <div key={item._id}>
                                         {item.subCategory && item.subCategory.name && (
-                                            <div className="text-lg italic text-red-600 mb-2">
+                                            <div className="md:text-lg text-base italic text-red-600 mb-2">
                                                 {item.subCategory.name}
                                             </div>
                                         )}
@@ -129,7 +129,7 @@ const Menu = () => {
                                             <div className='flex justify-between items-center bg-white shadow-xl p-4 rounded-lg w-fit cursor-pointer'>
                                                 <div>
                                                     <div className='flex flex-row items-center gap-x-3'>
-                                                        <div className="text-lg font-medium">{item.name}</div>
+                                                        <div className="md:text-lg text-base font-medium">{item.name}</div>
                                                         <div>
                                                             {item.veg ? (
                                                                 <span className="text-green-500"><GrSquare className='size-[15px]' /></span>

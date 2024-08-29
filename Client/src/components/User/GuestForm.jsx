@@ -15,47 +15,69 @@ const GuestForm = ({ goBack }) => {
     });
 
     const { id } = useParams();
-    const adminId = id;
+    // console.log(id)
+    // const adminId = id;
+    const token = Cookies.get('userToken');
+    // console.log(token)
 
-    useEffect(() => {
-        const token = Cookies.get('userToken');
-
-        if (!token) {
-            setShowBackButton(true);
-            return;
-        }
-
-        const fetchUserData = async () => {
-            try {
-                // Check IndexedDB first
-                const storedData = await getContactInformationFromDB();
-                
-                if (storedData) {
-                    // If data exists in IndexedDB, use it
-                    const { name, mobile, email, instruction } = storedData;
-                    setUserData({ name, mobile, email, instruction });
-                } else {
-                  
-                    const response = await axios.get(`http://localhost:5001/api/user/get/${id}`, {
-                        headers: {
-                            Authorization: token,
-                        },
-                    });
-    
-                    const { name, mobile, email } = response.data;
-                    const newUserData = { name, mobile, email, instruction: '' };
-                    setUserData(newUserData);
-    
-                    // Save fetched data to IndexedDB
-                    await saveContactInformationToDB(newUserData);
-                }
-            } catch (error) {
-                console.error("Failed to fetch user data:", error);
+  useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            console.log("Fetching user data");
+            
+            if (!token) {
+                setShowBackButton(true);
+                console.log("Token is not available");
+                return; // Exit early if no token
             }
-        };
-    
-        fetchUserData();
-    }, [adminId]);
+
+            const storedData = await getContactInformationFromDB();
+            console.log("Stored data:", storedData);
+
+            if (storedData && storedData.contactInfo) {
+                const { name, mobile, email, instruction } = storedData.contactInfo;
+                console.log("Using stored data:", { name, mobile, email, instruction });
+                setUserData({ name, mobile, email, instruction });
+            } else {
+                console.log("No stored data, fetching from API");
+                const response = await axios.get(`http://localhost:5001/api/user/get/${id}`, {
+                    headers: {
+                        Authorization: token,
+                    },
+                });
+                
+                console.log("API Response Data:", response.data);
+                
+                const { name, mobile, email } = response.data;
+                const newUserData = { name, mobile, email, instruction: '' };
+                setUserData(newUserData);
+                
+                // Save fetched data to IndexedDB
+                await saveContactInformationToDB({ id: 'contactInfo', contactInfo: newUserData });
+            }
+        } catch (error) {
+            console.error("Error in fetchUserData:", error);
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error("API error response:", error.response.data);
+                console.error("API error status:", error.response.status);
+                console.error("API error headers:", error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error("No response received:", error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error("Error setting up request:", error.message);
+            }
+            // Optional: Reset user data if an error occurs
+            setUserData({ name: '', mobile: '', email: '', instruction: '' });
+        }
+    };
+
+    fetchUserData();
+}, [id, token]);
+
 
     // Handle form change and update IndexedDB
     const handleChange = async (e) => {
@@ -72,7 +94,7 @@ const GuestForm = ({ goBack }) => {
     };
 
     return (
-        <div className="w-full lg:w-[70%] bg-white p-5 lg:p-10 rounded-lg shadow">
+        <div className="w-full lg:w-[70%] bg-white p-3 lg:p-10 rounded-lg shadow">
             <div className='flex flex-row gap-4 items-center'>
                 {showBackButton && (
                     <div>
@@ -88,9 +110,12 @@ const GuestForm = ({ goBack }) => {
             </div>
             <form>
                 <div className="mb-4 flex">
-                    <div className='flex flex-row gap-4 w-full justify-between'>
-                        <div className='w-1/2'>
+                    <div className='flex sm:flex-row flex-col gap-4 w-full justify-between'>
+                        <div className='sm:w-1/2 w-full'>
+                        <div className='flex'>
                             <label className="block text-gray-700 font-semibold text-xs mb-2" htmlFor="name">Name</label>
+                            <span className="text-red-400 ml-1 font-bold">*</span>
+                            </div>
                             <input
                                 type="text"
                                 id="name"
@@ -98,10 +123,14 @@ const GuestForm = ({ goBack }) => {
                                 placeholder="Enter your name"
                                 value={userData.name || ''}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
-                        <div className='w-1/2'>
+                        <div className='sm:w-1/2 w-full'>
+                        <div className='flex'>
                             <label className="block text-gray-700 font-semibold mb-2 text-xs" htmlFor="mobile">Mobile</label>
+                            <span className="text-red-400 ml-1 font-bold">*</span>
+                            </div>
                             <input
                                 type="text"
                                 id="mobile"
@@ -109,11 +138,12 @@ const GuestForm = ({ goBack }) => {
                                 placeholder="Enter your mobile number"
                                 value={userData.mobile || ''}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
                     </div>
                 </div>
-                <div className="mb-4 w-1/2">
+                <div className="mb-4 sm:w-1/2 w-full">
                     <label className="block text-gray-700 text-xs font-semibold mb-2" htmlFor="email">Email</label>
                     <input
                         type="email"

@@ -163,7 +163,7 @@ export const getContactInformationFromDB = async () => {
 };
 
 export const clearMultipleStoresFromDB = async (storeNames) => {
-    const request = indexedDB.open('your-database-name', 1); // Update with your database name and version
+    const request = indexedDB.open('menuDB', 11); 
 
     return new Promise((resolve, reject) => {
         request.onsuccess = (event) => {

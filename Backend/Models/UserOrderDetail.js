@@ -4,9 +4,16 @@ const { Schema } = mongoose;
 
 // Define the User schema
 const userOrderDetailSchema = new Schema({
- userInfo:Object,
- orderDetails:Object,
+  admin:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin',
+    required:true
+  },
+ contactDetail:Object,
+ orderDetail:Object,
  transactionDetail:Object,
+ cartItem:Object,
+ totalAmount: Object,
 
 });
 

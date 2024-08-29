@@ -81,8 +81,8 @@ const Sidebar = () => {
   };
 
   return (
-    <nav className={`bg-white text-black p-4 mt-2 ${isOpen ? 'w-64' : 'w-16'} transition-all duration-300 m-6 my-10 overflow-y-auto`}>
-      <div className="flex items-center justify-between my-6">
+    <nav className={`bg-white text-black sm:p-4 p-2 mt-2 ${isOpen ? 'w-64' : 'w-16'} transition-all duration-300 sm:m-6 m-2 sm:my-10   overflow-y-auto`}>
+      <div className="flex items-center justify-between">
         <div className="flex items-center">
           {isOpen ? <FaTimes onClick={toggleSidebar} size={20} /> : <FaBars onClick={toggleSidebar} size={20} />}
         </div>
@@ -97,7 +97,7 @@ const Sidebar = () => {
                   onClick={() => handleSubMenuToggle(index)}
                 >
                   {item.icon}
-                  {isOpen && <span className="text-base">{item.title}</span>}
+                  {isOpen && <span className="sm:text-base text-sm">{item.title}</span>}
                 </div>
                 {isOpen && openSubMenu === index && (
                   <div className="pl-8">
@@ -127,7 +127,7 @@ const Sidebar = () => {
                 className="flex items-center space-x-2 py-2 hover:bg-gray-200"
               >
                 {item.icon}
-                {isOpen && <span className="text-base">{item.title}</span>}
+                {isOpen && <span className="sm:text-base text-sm ">{item.title}</span>}
               </NavLink>
             )}
           </div>
