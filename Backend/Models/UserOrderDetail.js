@@ -1,21 +1,25 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-
 // Define the User schema
 const userOrderDetailSchema = new Schema({
-  admin:{
+  admin: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Admin',
-    required:true
+    required: true
   },
- contactDetail:Object,
- orderDetail:Object,
- transactionDetail:Object,
- cartItem:Object,
- totalAmount: Object,
-
+  contactDetail: Object,
+  orderType: String,
+  transactionDetail: Object,
+  cartItem: Object,
+  totalAmount: Object,
+  orderStatus: {
+    type: String
+  }
+}, {
+  timestamps: true 
 });
+
 
 // Create and export the User model
 const UserOrderDetail = mongoose.model('UserOrderDetail', userOrderDetailSchema);

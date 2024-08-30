@@ -112,7 +112,7 @@ const Checkout = () => {
                 }
 
                 const data=await getDrawerDataFromDB();
-                await axios.post('http://localhost:5001/api/userorder',{ cartItem:data, contactInfo:contact, paymentInfo:paymentType, OrderDetail:orderType, adminId:id })
+                await axios.post('http://localhost:5001/api/userorder',{ cartItem:data, contactInfo:contact, paymentInfo:paymentType, orderDetail:orderType, adminId:id })
             }catch(err){
                 console.log(err);
             }
