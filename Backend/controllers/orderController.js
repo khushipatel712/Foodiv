@@ -81,4 +81,20 @@ exports.deleteOrder = async (req, res) => {
   }
 };
 
+exports.getOrderById = async (req, res) => {
+  try {
+    const orderId = req.params.orderId; // Extract the order ID from the request parameters
 
+    // Find the order by its ID
+    const order = await UserOrderDetail.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' }); // Respond with an error if the order is not found
+    }
+
+    res.status(200).json(order); // Respond with the found order
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    res.status(500).json({ error: 'Failed to fetch order' }); // Respond with an error if there's an issue
+  }
+};

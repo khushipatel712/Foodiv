@@ -50,6 +50,7 @@ import HomePage from './components/User/Pages/HomePage';
 import UserLayout from './components/User/Pages/UserLayout';
 import MenuComponent from './components/User/MenuComponent';
 import IndexDbItemComponent from '../src/components/User/IndexDbItemComponent';
+import OrderDetails1 from './components/Admin/OrderDetail';
 function App() {
   return (
    <RegisterProvider>
@@ -90,6 +91,8 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="orders/active" element={<OrderManagement />} />
+          {/* <Route path="/" element={<OrderManagement />} /> */}
+        <Route path="order-details/:orderId" element={<OrderDetails1 />} />
           <Route path="orders/all" element={<OrderTable />} />
           <Route path="menu" element={<Menu />} />
           <Route path="categories" element={<Categories />} />

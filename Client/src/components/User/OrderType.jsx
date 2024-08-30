@@ -36,7 +36,7 @@ const OrderType = ({ onClose }) => {
                         <div className='flex justify-center gap-2'>
                             <button
                                 type="button"
-                                onClick={() => handleOrderTypeSelection('Dine In')}
+                                onClick={() => handleOrderTypeSelection('DineIn')}
                                 className="bg-white hover:bg-orange-600 text-orange-600 border-orange-600 border-2 hover:text-white px-4 py-2 rounded transition"
                             >
                                 Dine In

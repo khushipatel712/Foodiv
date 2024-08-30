@@ -11,6 +11,8 @@ router.put('/order/status/:orderid',upload.none(), orderMiddleware.validateOrder
 
 router.get('/orders/admin/:adminId', userOrderDetail.getAllOrders);
 
+router.get('/order/:orderId', userOrderDetail.getOrderById);
+
 
 router.delete('/order/:orderId', userOrderDetail.deleteOrder);
 
