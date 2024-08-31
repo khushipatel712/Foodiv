@@ -98,3 +98,32 @@ exports.getOrderById = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch order' }); // Respond with an error if there's an issue
   }
 };
+
+exports.updatePaymentStatus = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const { paymentStatus } = req.body;
+
+    // Find the order by ID
+    const order = await UserOrderDetail.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    // Update the payment status if provided
+    if (paymentStatus) {
+      order.paymentStatus = paymentStatus;
+    } else {
+      return res.status(400).json({ error: 'Payment status is required' });
+    }
+
+    // Save the updated order
+    const updatedOrder = await order.save();
+
+    res.status(200).json(updatedOrder); // Respond with the updated order
+  } catch (error) {
+    console.error('Error updating payment status:', error);
+    res.status(500).json({ error: 'Failed to update payment status' });
+  }
+};

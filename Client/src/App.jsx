@@ -51,6 +51,7 @@ import UserLayout from './components/User/Pages/UserLayout';
 import MenuComponent from './components/User/MenuComponent';
 import IndexDbItemComponent from '../src/components/User/IndexDbItemComponent';
 import OrderDetails1 from './components/Admin/OrderDetail';
+import PoliciesAndTerms from './components/Admin/PoliciesandTerms';
 function App() {
   return (
    <RegisterProvider>
@@ -98,7 +99,7 @@ function App() {
           <Route path="categories" element={<Categories />} />
           <Route path="manage" element={<Manage1 />} />
           <Route path="subscriptions" element={<SubscriptionPlan />} />
-          <Route path="policies" element={<Manage1 />} />
+          <Route path="policies" element={<PoliciesAndTerms/>} />
           <Route path="notification" element={<Notification />} />
           <Route path="smtp-setting" element={<SmtpSetting />} />
           <Route path="support" element={<CustomerSupport />} />

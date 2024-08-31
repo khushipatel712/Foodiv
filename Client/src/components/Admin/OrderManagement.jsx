@@ -33,7 +33,7 @@
 
 //     return (
 //         <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
-       
+
 //            <div className='flex  flex-col justify-between items-center'>
 //             <OrderTypeSelector
 //                 orderTypes={orderTypes}
@@ -45,7 +45,7 @@
 //                 <OrderStatusList
 //                     statuses={statuses}
 //                     onStatusClick={handleStatusClick}
-                    
+
 //                 />
 //             )}
 
@@ -107,7 +107,7 @@ const OrderManagement = () => {
     const [selectedOrderType, setSelectedOrderType] = useState(null);
     const [statuses, setStatuses] = useState([]);
     const [orders, setOrders] = useState([]);
-    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedOrders, setSelectedOrders] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -128,7 +128,8 @@ const OrderManagement = () => {
                 TableRoom: ['New Order', 'Confirmed', 'Preparing', 'Order Completed', 'Cancelled'],
             };
             setStatuses(orderStatuses[selectedOrderType]);
-            fetchOrders();
+            setSelectedOrders([]); // Reset selected orders when changing order type
+            fetchOrders(''); // Fetch orders with default status "New Order"
         }
     }, [selectedOrderType, profile]);
 
@@ -147,11 +148,11 @@ const OrderManagement = () => {
 
     const handleStatusClick = (status) => {
         const filteredOrders = orders.filter(order => order.orderStatus === status);
-        setSelectedOrder(filteredOrders[0]);
+        setSelectedOrders(filteredOrders);
     };
 
     const handleOrderClick = (order) => {
-        navigate(`/admin/order-details/${order._id}`);
+        navigate(`/admin/order-details/${order}`);
     };
 
     if (isProfileLoading) {
@@ -185,47 +186,67 @@ const OrderManagement = () => {
 
             {loading && <p>Loading orders...</p>}
 
-            {selectedOrder && (
-                <div className="w-96 border p-4 rounded-lg shadow-lg mt-6 bg-gray-50" onClick={() => handleOrderClick(selectedOrder)}>
-                    <div className='flex justify-between'>
-                        <div className="mb-4">
-                            <p className="text-sm text-gray-500">Order ID: <span className="font-semibold text-gray-700">{selectedOrder._id}</span></p>
-                            <p className="text-sm text-gray-500">Date: <span className="font-semibold text-gray-700">{new Date(selectedOrder.createdAt).toLocaleString()}</span></p>
-                            <p className="text-sm text-gray-500">Name: <span className="font-semibold text-gray-700">{selectedOrder.contactDetail.name}</span></p>
-                        </div>
-                        <div className="mb-4">
-                            <p className="text-sm font-bold text-gray-800">
-                                Status: 
-                                <span 
-                                    className={`ml-2 px-2 py-1 rounded-md ${
-                                    selectedOrder.orderStatus === 'Cancelled' 
-                                        ? 'bg-red-100 text-red-500' 
-                                        : 'bg-green-100 text-green-500'
-                                    }`}
-                                >
-                                    {selectedOrder.orderStatus}
+            {/* {selectedOrders.length === 0 ? (
+                <p>No orders found.</p>
+            
+            ) : ( */}
+                <div className="mt-6 space-y-6 w-full lg:space-y-0 lg:flex lg:flex-wrap lg:gap-4">
+                    {selectedOrders.map(selectedOrder => (
+                        <div key={selectedOrder._id} 
+                         className="w-fit lg:w-1/2 xl:w-1/2 border p-4 rounded-lg shadow-lg bg-gray-50 cursor-pointer"
+                        onClick={() => handleOrderClick(selectedOrder._id)}>
+                            <div className='flex justify-between'>
+                                <div className="mb-4">
+                                    <p className="text-sm text-gray-500">Order ID: <span className="font-semibold text-gray-700">{selectedOrder._id}</span></p>
+                                    <p className="text-sm text-gray-500">Date: <span className="font-semibold text-gray-700">{new Date(selectedOrder.createdAt).toLocaleString()}</span></p>
+                                    <p className="text-sm text-gray-500">Name: <span className="font-semibold text-gray-700">{selectedOrder.contactDetail.name}</span></p>
+                                </div>
+                                <div className="mb-4">
+                                <div className='flex '>
+                                <div>
+                                <span   className={`ml-2 text-xs px-2 py-1 flex rounded-md ${selectedOrder.paymentStatus === 'unpaid'
+                                                    ? 'bg-red-500 text-white '
+                                                    : 'bg-green-500 text-white'
+                                                }`}
+                                    >
+                                    {selectedOrder.paymentStatus}
                                 </span>
-                            </p>
+                                    
+                                </div>
+                                    <div className="text-sm inline-flex  font-bold text-gray-800">
+                                        <span
+                                            className={`ml-2 text-xs px-2 py-1 whitespace-nowrap rounded-md ${selectedOrder.orderStatus === 'Cancelled'
+                                                    ? 'bg-red-100 text-red-500 '
+                                                    : 'bg-green-100 text-green-500'
+                                                }`}
+                                        >
+                                            {selectedOrder.orderStatus}
+                                        </span>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div className="mb-6">
+                                <p className="text-lg font-bold text-gray-800">Amount: <span className="text-gray-700">₹{selectedOrder.totalAmount}</span></p>
+                            </div>
+                            <div>
+                                <p className="text-lg font-semibold text-gray-800 mb-2">Items Ordered:</p>
+                                <ul className="space-y-2">
+                                    {selectedOrder.cartItem.map((item, index) => (
+                                        <li key={index} className="flex justify-between items-center border-b pb-2">
+                                            <span className="text-gray-700">{item.quantity} x {item.name}</span>
+                                            <span className="text-gray-800 font-semibold">₹{item.price * item.quantity}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    <div className="mb-6">
-                        <p className="text-lg font-bold text-gray-800">Amount: <span className="text-gray-700">₹{selectedOrder.totalAmount}</span></p>
-                    </div>
-                    <div>
-                        <p className="text-lg font-semibold text-gray-800 mb-2">Items Ordered:</p>
-                        <ul className="space-y-2">
-                            {selectedOrder.cartItem.map((item, index) => (
-                                <li key={index} className="flex justify-between items-center border-b pb-2">
-                                    <span className="text-gray-700">{item.quantity} x {item.name}</span>
-                                    <span className="text-gray-800 font-semibold">₹{item.price * item.quantity}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    ))}
                 </div>
-            )}
-        </div>
+            {/* ) */}
+            {/* } */}
+            </div>
     );
 };
 
-export default OrderManagement;
+            export default OrderManagement;

@@ -133,7 +133,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa'; // Import the left arrow icon
+// import { FaArrowLeft } from 'react-icons/fa';
+import { MdDelete } from "react-icons/md";
+import { FaAngleLeft } from "react-icons/fa";
+// import jsPDF from 'jspdf';
+import InvoiceGenerator from './InvoiceGenerator';
+// Import the left arrow icon
 
 const OrderDetails = () => {
     const { orderId } = useParams();
@@ -150,18 +155,17 @@ const OrderDetails = () => {
         try {
             const response = await axios.get(`http://localhost:5001/api/order/${orderId}`);
             const order = response.data;
-            
-            // Define the statuses based on order type
+
             const orderStatuses = {
                 DineIn: ['New Order', 'Confirmed', 'Preparing', 'Ready for Serve', 'Order Completed', 'Cancelled'],
                 Takeaway: ['New Order', 'Confirmed', 'Preparing', 'Ready for Pickup', 'Order Completed', 'Cancelled'],
                 Delivery: ['New Order', 'Confirmed', 'Preparing', 'Out for Delivery', 'Order Completed', 'Cancelled'],
                 TableRoom: ['New Order', 'Confirmed', 'Preparing', 'Order Completed', 'Cancelled'],
             };
-            
+
             const statusList = orderStatuses[order.orderType];
             const currentStatusIndex = statusList.indexOf(order.orderStatus);
-            
+
             const statuses = statusList.map((status, index) => ({
                 name: status,
                 time: index <= currentStatusIndex ? new Date(order.updatedAt).toLocaleString('en-GB', { hour12: true }) : '-'
@@ -169,7 +173,7 @@ const OrderDetails = () => {
 
             // Determine the next status
             const nextStatus = currentStatusIndex < statusList.length - 1 ? statusList[currentStatusIndex + 1] : 'Completed';
-            
+
             setOrderDetails({ ...order, statuses, nextStatus });
             setLoading(false);
         } catch (err) {
@@ -188,7 +192,7 @@ const OrderDetails = () => {
 
         const statusList = orderStatuses[orderDetails.orderType];
         const currentIndex = statusList.indexOf(orderDetails.orderStatus);
-        
+
         if (currentIndex < statusList.length - 1) {
             const newStatus = statusList[currentIndex + 1];
             try {
@@ -202,10 +206,10 @@ const OrderDetails = () => {
                     const updatedStatuses = prevDetails.statuses.map((status, index) =>
                         index === currentIndex + 1 ? { ...status, time: new Date().toLocaleString('en-GB', { hour12: true }) } : status
                     );
-                    
+
                     // Update nextStatus and statuses
                     const nextStatus = currentIndex + 2 < statusList.length ? statusList[currentIndex + 2] : 'Completed';
-                    
+
                     return {
                         ...prevDetails,
                         orderStatus: newStatus,
@@ -223,6 +227,41 @@ const OrderDetails = () => {
         navigate(-1);
     };
 
+    const updatePaymentStatus = async (orderId) => {
+        try {
+            await axios.put(`http://localhost:5001/api/order/payment/${orderId}`, {
+                paymentStatus: 'paid'
+            });
+            // Update the order in the state to reflect the new payment status
+            // setSelectedOrders(prevOrders =>
+            //     prevOrders.map(order =>
+            //         order._id === orderId ? { ...order, paymentStatus: 'paid' } : order
+            //     )
+            // );
+            fetchOrderDetails();
+        } catch (error) {
+            console.error('Error updating payment status:', error);
+        }
+    };
+
+
+    const handleOrderDelete = async (orderId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this order?');
+        
+        if (confirmDelete) {
+            try {
+                await axios.delete(`http://localhost:5001/api/order/${orderId}`);
+                alert('Order deleted successfully.');
+                navigate('/admin/orders/all'); // Replace '/desired-route' with the actual route you want to navigate to after deletion
+            } catch (error) {
+                console.error('Error deleting order:', error);
+                alert('Failed to delete the order. Please try again.');
+            }
+        }
+    };
+
+
+   
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
     if (!orderDetails) return <div>No order details found</div>;
@@ -230,37 +269,71 @@ const OrderDetails = () => {
     return (
         <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
             <div className="flex lg:flex-row flex-col justify-between items-center mb-6">
-                <div className="flex items-center justify-between w-full">
-   <div>
-    
-                    <button onClick={handleBack} className="mr-2 px-2 py-2 bg-gray-500 text-white text-sm rounded-lg flex items-center">
-                        <FaArrowLeft className="mr-1" /> Back
-                    </button>
-   </div>
-   <div>
+                <div className="flex items-center flex-col lg:flex-row justify-between w-full space-y-4 ">
+                    <div className='flex  flex-col lg:flex-row items-center gap-3 '>
 
-                    <button 
-                        className="px-3 py-2 bg-green-500 text-white rounded-lg text-sm"
-                        onClick={handleStatusUpdate}
-                    >
-                        {orderDetails.nextStatus}
-                    </button>
-   </div>
+                        <div className='flex lg:flex-row flex-row'>
+
+                            <button onClick={handleBack} >
+                                <FaAngleLeft className='size-7 ' />
+                            </button>
+                        
+                        <div className='lg:text-2xl md:text-lg text-lg font-medium'>
+                            Order ID : {orderDetails._id}
+                        </div>
+                        </div>
+
+                     <div>
+
+                        {orderDetails.paymentStatus === 'unpaid' && (
+                            <div className='flex items-start'>
+                                <button
+                                    className='lg:text-base text-sm text-blue-500 underline'
+                                    onClick={() => updatePaymentStatus(orderDetails._id)}
+                                >
+                                    Mark as paid
+                                </button>
+                            </div>
+                        )}
+
+                     </div>
+                    </div>
+                    <div className='flex gap-1'>
+
+                        <div>
+
+                            <button
+                                className="lg:px-3 lg:py-2 px-2 py-1  bg-green-500 text-white rounded-lg text-sm"
+                                onClick={handleStatusUpdate}
+                            >
+                                Marked as {orderDetails.nextStatus}
+                            </button>
+                        </div>
+                        <div onClick={()=>handleOrderDelete(orderDetails._id)} className='p-2 hover:bg-red-100 rounded-md'>
+                            <MdDelete className='size-5' />
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div className="flex lg:flex-row flex-col  space-y-3 lg:space-y-0 space-x-4 items-center mb-6">
-                <div>Order Status: 
+                <div>Order Status:
                     <span className="px-2 ml-1 py-1 text-sm bg-blue-100 text-blue-500 rounded">{orderDetails.orderStatus}</span>
                 </div>
-                <div>Type: 
+                <div>Type:
                     <span className="px-2 py-1 ml-1 text-sm bg-gray-100 text-gray-500 rounded">{orderDetails.orderType}</span>
                 </div>
-                <div>Payment Mode: 
+                <div>Payment Mode:
                     <span className="px-2 py-1 ml-1 text-sm bg-red-100 text-red-500 rounded">{orderDetails.transactionDetail}</span>
                 </div>
-                <div>Payment Status: 
-                    <span className="px-2 py-1 ml-1 text-sm bg-red-500 text-white rounded">{orderDetails.paymentStatus || 'N/A'}</span>
+                <div>
+                    Payment Status:
+                    <span
+                        className={`px-2 py-1 ml-1 text-sm text-white rounded ${orderDetails.paymentStatus === 'unpaid' ? 'bg-red-500' : 'bg-green-500'
+                            }`}
+                    >
+                        {orderDetails.paymentStatus || 'N/A'}
+                    </span>
                 </div>
             </div>
 
@@ -286,7 +359,9 @@ const OrderDetails = () => {
                     <div className="font-semibold">{orderDetails.contactDetail.name}</div>
                     <div>{new Date(orderDetails.createdAt).toLocaleString('en-GB', { hour12: true })}</div>
                     <div>{orderDetails.contactDetail.phone}</div>
-                    <div className="text-blue-500 text-sm underline cursor-pointer">View Invoice</div>
+
+                    <InvoiceGenerator orderDetails={orderDetails} />
+
                 </div>
 
                 <div className="bg-gray-100 p-4 rounded-lg shadow-sm">

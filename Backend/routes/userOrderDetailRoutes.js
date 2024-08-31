@@ -13,6 +13,8 @@ router.get('/orders/admin/:adminId', userOrderDetail.getAllOrders);
 
 router.get('/order/:orderId', userOrderDetail.getOrderById);
 
+router.put('/order/payment/:orderId',upload.none(), userOrderDetail.updatePaymentStatus);
+
 
 router.delete('/order/:orderId', userOrderDetail.deleteOrder);
 

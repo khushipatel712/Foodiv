@@ -15,7 +15,13 @@ const userOrderDetailSchema = new Schema({
   totalAmount: Object,
   orderStatus: {
     type: String
-  }
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['paid', 'unpaid'],
+    required: true,
+    default: 'unpaid'
+  },
 }, {
   timestamps: true 
 });
