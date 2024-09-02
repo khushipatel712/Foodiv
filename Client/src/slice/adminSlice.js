@@ -6,11 +6,14 @@ const adminSlice = createSlice({
     online: false, // Initial state for the online status
   },
   reducers: {
+    setOnlineStatus(state, action) {
+      state.online = action.payload; // Set the online status from the payload
+    },
     toggleOnlineStatus(state) {
       state.online = !state.online; // Toggles the boolean value
     },
   },
 });
 
-export const { toggleOnlineStatus } = adminSlice.actions;
+export const { setOnlineStatus, toggleOnlineStatus } = adminSlice.actions;
 export default adminSlice.reducer;

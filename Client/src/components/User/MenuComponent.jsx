@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import DrawerComponent from './DrawerComponent';
 import { GrSquare } from 'react-icons/gr';
 import { useParams } from 'react-router-dom';
-import { useFetchMenuItemsQuery, useGetMenuItemsByAdminIdQuery} from '../../services/menuitemApi'; // Import the API hooks
+import { useGetMenuItemsByAdminIdQuery} from '../../services/menuitemApi';
+import { useGetProfileByIdQuery } from '../../services/adminApi';
+ // Import the API hooks
 
 const MenuComponent = () => {
     const {id}=useParams();
@@ -12,9 +14,20 @@ const MenuComponent = () => {
     const [isVegOnly, setIsVegOnly] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [cartItems, setCartItems] = useState([]);
+    const [onlineStatus, setOnlineStatus] = useState(true); // State for online status
+    const [showModal, setShowModal] = useState(false);
 
     // Fetch menu items using the API hook
     const { data: menuItems = [], error, isLoading } = useGetMenuItemsByAdminIdQuery(adminId);
+
+    const { data: profile } = useGetProfileByIdQuery(adminId);
+
+
+    useEffect(() => {
+        if (profile) {
+            setOnlineStatus(profile.online); // Set online status from profile
+        }
+    }, [profile]);
 
     const handleIncrement = (itemId) => {
         setCartItems(prevItems =>
@@ -49,18 +62,22 @@ const MenuComponent = () => {
     };
 
     const handleAddToCart = (item) => {
-        setCartItems(prevItems => {
-            const existingItem = prevItems.find(cartItem => cartItem.id === item._id);
-            if (existingItem) {
-                return prevItems.map(cartItem =>
-                    cartItem.id === item._id
-                        ? { ...cartItem, quantity: (cartItem.quantity || 1) + 1 }
-                        : cartItem
-                );
-            } else {
-                return [...prevItems, { ...item, id: item._id, quantity: 1 }];
-            }
-        });
+        if (onlineStatus) {
+            setCartItems(prevItems => {
+                const existingItem = prevItems.find(cartItem => cartItem.id === item._id);
+                if (existingItem) {
+                    return prevItems.map(cartItem =>
+                        cartItem.id === item._id
+                            ? { ...cartItem, quantity: (cartItem.quantity || 1) + 1 }
+                            : cartItem
+                    );
+                } else {
+                    return [...prevItems, { ...item, id: item._id, quantity: 1 }];
+                }
+            });
+        } else {
+            setShowModal(true);
+        }
     };
 
     const handleRemoveFromCart = (itemId) => {
@@ -251,8 +268,29 @@ const MenuComponent = () => {
                 totalAmount={totalAmount} 
                 onRemoveFromCart={handleRemoveFromCart} // Pass the remove function if needed
             />
+
+               {/* Modal */}
+               {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-lg max-w-sm w-full">
+                        {/* <h2 className="text-xl font-bold mb-4">Offline Mode</h2> */}
+                        <p className="mb-4 lg:text-lg text-base text-center font-medium text-orange-500">Sorry, We are currently not accepting orders.</p>
+                        <div className="flex justify-center">
+                            <button
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
 
 export default MenuComponent;
+
+
+
