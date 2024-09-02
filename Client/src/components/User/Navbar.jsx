@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { useParams } from 'react-router-dom';
@@ -112,10 +113,10 @@ const Navbar = () => {
                   </button>
                 </li>
               )}
-              <li><a href="#" className="block text-orange-500 hover:text-orange-700">Terms and Conditions</a></li>
-              <li><a href="#" className="block text-orange-500 hover:text-orange-700">Privacy Policy</a></li>
-              <li><a href="#" className="block text-orange-500 hover:text-orange-700">Cancellation Policy</a></li>
-              <li><a href="#" className="block text-orange-500 hover:text-orange-700">Shipping Policy</a></li>
+              <li><Link  to={`/${id}/terms`}  className="block text-orange-500 hover:text-orange-700">Terms and Conditions</Link></li>
+              <li><Link  to={`/${id}/privacy`} className="block text-orange-500 hover:text-orange-700">Privacy Policy</Link></li>
+              <li><Link  to={`/${id}/cancellation`} className="block text-orange-500 hover:text-orange-700">Cancellation Policy</Link></li>
+              <li><Link  to={`/${id}/shipping`} className="block text-orange-500 hover:text-orange-700">Shipping Policy</Link></li>
               {profile && (
                 <li className="mt-4 text-gray-700">
                   <p><strong>Restaurant Name:</strong> {profile.restaurantName}</p>

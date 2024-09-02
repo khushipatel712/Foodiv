@@ -37,7 +37,7 @@ app.use('/api', subcategoryRoutes);
 app.use('/api', menuItemRoutes);
 app.use('/api', userRoutes);
 app.use('/api', userOrderDetailRoutes);
-app.use('/api', usePolicyRoutes);
+app.use('/api/policy', usePolicyRoutes);
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 const port = process.env.PORT || 5002;

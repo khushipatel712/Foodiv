@@ -1,29 +1,47 @@
-const Policies = require('../Models/Policy'); // Import your Policies model
+const express = require('express');
+const Policy = require('../models/Policy'); // Assuming a Policy model is defined
 
-// GET request to fetch policies
-exports.getPolicies = async (req, res) => {
+// Create or update policy content
+exports.savePolicy = async (req, res) => {
+    const { policyType, content, adminId } = req.body;
+
     try {
-        const policies = await Policies.findOne(); // Fetch the policies from the database
-        res.json(policies);
+        let policy = await Policy.findOne({ type: policyType });
+        if (policy) {
+            policy.content = content;
+            policy.adminId = adminId;
+            await policy.save();
+        } else {
+            policy = new Policy({ type: policyType, content, adminId });
+            await policy.save();
+        }
+
+        res.status(200).json({ message: `${policyType} policy saved successfully`, policy });
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching policies', error });
+        console.error(`Error saving ${policyType} policy:`, error);
+        res.status(500).json({ message: `Error saving ${policyType} policy`, error });
     }
 };
 
-// POST request to update policies
-exports.updatePolicies = async (req, res) => {
+// Get policy content by type
+exports.getPolicy = async (req, res) => {
+    const { adminId, policyType } = req.params;
+
     try {
-        const { terms, privacy, shipping, cancellation } = req.body;
-        const updateFields = {};
+        // Find policy based on adminId and policyType
+        const policy = await Policy.findOne({ adminId, type: policyType });
 
-        if (terms) updateFields.terms = terms;
-        if (privacy) updateFields.privacy = privacy;
-        if (shipping) updateFields.shipping = shipping;
-        if (cancellation) updateFields.cancellation = cancellation;
+        if (!policy) {
+            // Return a blank response with status 200 if policy is not found
+            return res.status(200).json({ content: '' });
+        }
 
-        const updatedPolicy = await Policy.findOneAndUpdate({}, updateFields, { new: true });
-        res.status(200).json(updatedPolicy);
+        // Return the found policy
+        res.status(200).json({ content: policy.content });
     } catch (error) {
-        res.status(500).json({ message: "Error updating policies", error });
+        console.error(`Error fetching ${policyType} policy for adminId ${adminId}:`, error);
+        // Return a blank response with status 200 in case of an error
+        res.status(200).json({ content: '' });
     }
 };
+

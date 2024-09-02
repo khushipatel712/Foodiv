@@ -1,12 +1,24 @@
 const mongoose = require('mongoose');
 
-const policySchema = new mongoose.Schema({
-    terms: { type: String, required: true },
-    privacy: { type: String, required: true },
-    shipping: { type: String, required: true },
-    cancellation: { type: String, required: true },
-}, { timestamps: true });
+const PolicySchema = new mongoose.Schema({
+    type: {
+        type: String,
+        required: true,
+        enum: ['terms', 'privacy', 'shipping', 'cancellation'],
+    },
+    content: {
+        type: String,
+        required: true,
+    },
+    adminId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Admin',
+        required: true,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    },
+});
 
-const Policy = mongoose.model('Policy', policySchema);
-
-module.exports = Policy;
+module.exports = mongoose.model('Policy', PolicySchema);

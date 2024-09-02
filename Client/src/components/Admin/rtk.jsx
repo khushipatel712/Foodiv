@@ -7,7 +7,8 @@ export const categories =createApi({
         baseUrl:"http://localhost:5001/api/"
     }),
     endpoints:(builder)=>({
-       getCategories= builder.query({query:()=>'categories'}),
+       getCategories
+       : builder.query({query:()=>'categories'}),
 
     })
 })

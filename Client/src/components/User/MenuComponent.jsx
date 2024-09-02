@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import DrawerComponent from './DrawerComponent';
 import { GrSquare } from 'react-icons/gr';
-import { useFetchMenuItemsQuery } from '../../services/menuitemApi'; // Import the API hooks
+import { useParams } from 'react-router-dom';
+import { useFetchMenuItemsQuery, useGetMenuItemsByAdminIdQuery} from '../../services/menuitemApi'; // Import the API hooks
 
 const MenuComponent = () => {
+    const {id}=useParams();
+    const adminId=id
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isVegOnly, setIsVegOnly] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [cartItems, setCartItems] = useState([]);
 
     // Fetch menu items using the API hook
-    const { data: menuItems = [], error, isLoading } = useFetchMenuItemsQuery();
+    const { data: menuItems = [], error, isLoading } = useGetMenuItemsByAdminIdQuery(adminId);
 
     const handleIncrement = (itemId) => {
         setCartItems(prevItems =>

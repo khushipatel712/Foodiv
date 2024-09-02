@@ -156,7 +156,8 @@ exports.getProfile=async (req, res) => {
             latitude: user.latitude,
             longitude: user.longitude,
             domain: user.domain,
-            image: imageUrl // Add image URL to the response
+            image: imageUrl,
+            online:user.online // Add image URL to the response
         });
     } catch (error) {
         console.error('Error fetching profile:', error);
@@ -254,7 +255,8 @@ exports.updateStatus = async (req, res) => {
             latitude: user.latitude,
             longitude: user.longitude,
             domain: user.domain,
-            image: imageUrl // Add image URL to the response
+            image: imageUrl,
+            online: user.online // Add image URL to the response
         });
     } catch (error) {
         console.error('Error fetching profile:', error);

@@ -52,6 +52,11 @@ import MenuComponent from './components/User/MenuComponent';
 import IndexDbItemComponent from '../src/components/User/IndexDbItemComponent';
 import OrderDetails1 from './components/Admin/OrderDetail';
 import PoliciesAndTerms from './components/Admin/PoliciesandTerms';
+import TermsAndConditionsPage from './components/User/TermsAndConditionPage';
+import PrivacyPolicyPage from './components/User/PrivacyPolicy';
+import ShippingPolicyPage from './components/User/ShippingPolicy';
+import CancellationPolicyPage from './components/User/CancellationPolicy';
+import PrivateRoute from './components/Admin/Pages/PrivateRoutes';
 function App() {
   return (
    <RegisterProvider>
@@ -64,8 +69,6 @@ function App() {
           <Route path="*" element={<Footer />} />
         </Route>
 
-        <Route path='/login' element={<LoginForm/>}/>
-        <Route path='/register' element={<Register/>}/>
         <Route path="/:id/user/confirmation" element={<OrderConfirmation/>} />
 
 
@@ -74,6 +77,10 @@ function App() {
       <Route path="user/menu" element={<HomePage/>} />
       <Route path="user/checkout" element={<CartView/>} />
       <Route path='user/check' element={<Checkout/>}/>
+      <Route path="terms" element={<TermsAndConditionsPage />} />
+                    <Route path="privacy" element={<PrivacyPolicyPage />} />
+                    <Route path="shipping" element={<ShippingPolicyPage />} />
+                    <Route path="cancellation" element={<CancellationPolicyPage />} />
      </Route>
 
      <Route path="pricing" element={<SubscriptionPlan/>} /> 
@@ -87,27 +94,28 @@ function App() {
 <Route path="indexdb" element={<IndexDbItemComponent/>} /> 
 
 
+        <Route path='/register' element={<Register/>}/>
+        <Route path='/login' element={<LoginForm/>}/>
 
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="orders/active" element={<OrderManagement />} />
-          {/* <Route path="/" element={<OrderManagement />} /> */}
-        <Route path="order-details/:orderId" element={<OrderDetails1 />} />
-          <Route path="orders/all" element={<OrderTable />} />
-          <Route path="menu" element={<Menu />} />
-          <Route path="categories" element={<Categories />} />
-          <Route path="manage" element={<Manage1 />} />
-          <Route path="subscriptions" element={<SubscriptionPlan />} />
-          <Route path="policies" element={<PoliciesAndTerms/>} />
-          <Route path="notification" element={<Notification />} />
-          <Route path="smtp-setting" element={<SmtpSetting />} />
-          <Route path="support" element={<CustomerSupport />} />
-          <Route path="menu/addmenuitem" element={<AddMenuItem />} />
-          <Route path="menu/edit-item-menu/:menuItemId" element={<AddMenuItem />} />
-          <Route path="account" element={<AdminDetail />} />
-        </Route>
-      
+        {/* <Route path="/login" element={<LoginPage />} /> */}
+      <Route path="/admin" element={<PrivateRoute element={AdminLayout} />}>
+        <Route index element={<PrivateRoute element={Dashboard} />} />
+        <Route path="dashboard" element={<PrivateRoute element={Dashboard} />} />
+        <Route path="orders/active" element={<PrivateRoute element={OrderManagement} />} />
+        <Route path="order-details/:orderId" element={<PrivateRoute element={OrderDetails1} />} />
+        <Route path="orders/all" element={<PrivateRoute element={OrderTable} />} />
+        <Route path="menu" element={<PrivateRoute element={Menu} />} />
+        <Route path="categories" element={<PrivateRoute element={Categories} />} />
+        <Route path="manage" element={<PrivateRoute element={Manage1} />} />
+        <Route path="subscriptions" element={<PrivateRoute element={SubscriptionPlan} />} />
+        <Route path="policies" element={<PrivateRoute element={PoliciesAndTerms} />} />
+        <Route path="notification" element={<PrivateRoute element={Notification} />} />
+        <Route path="smtp-setting" element={<PrivateRoute element={SmtpSetting} />} />
+        <Route path="support" element={<PrivateRoute element={CustomerSupport} />} />
+        <Route path="menu/addmenuitem" element={<PrivateRoute element={AddMenuItem} />} />
+        <Route path="menu/edit-item-menu/:menuItemId" element={<PrivateRoute element={AddMenuItem} />} />
+        <Route path="account" element={<PrivateRoute element={AdminDetail} />} />
+      </Route>
     
       </Routes>
     </Router>

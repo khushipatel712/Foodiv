@@ -1,22 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import axios from 'axios';
+import { useGetProfileQuery } from '../../services/adminApi';
+import Cookies from 'js-cookie';
 
 const PoliciesAndTerms = () => {
+    const token = Cookies.get('token');
+    const { data: profileData } = useGetProfileQuery(token);
     const [termsContent, setTermsContent] = useState('');
     const [privacyContent, setPrivacyContent] = useState('');
     const [shippingContent, setShippingContent] = useState('');
     const [cancellationContent, setCancellationContent] = useState('');
 
-    const handleSave = (policyType) => {
-        const data = {};
-        if (policyType === 'terms') data.terms = termsContent;
-        if (policyType === 'privacy') data.privacy = privacyContent;
-        if (policyType === 'shipping') data.shipping = shippingContent;
-        if (policyType === 'cancellation') data.cancellation = cancellationContent;
+    const adminId = profileData?.id;
 
-        axios.post('http://localhost:5000/api/policies', data)
+    useEffect(() => {
+        if (adminId) {
+            const fetchData = async () => {
+                try {
+                    const [termsResponse, privacyResponse, shippingResponse, cancellationResponse] = await Promise.all([
+                        axios.get(`http://localhost:5001/api/policy/terms/${adminId}`),
+                        axios.get(`http://localhost:5001/api/policy/privacy/${adminId}`),
+                        axios.get(`http://localhost:5001/api/policy/shipping/${adminId}`),
+                        axios.get(`http://localhost:5001/api/policy/cancellation/${adminId}`),
+                    ]);
+
+                    setTermsContent(termsResponse.data.content || '');
+                    setPrivacyContent(privacyResponse.data.content || '');
+                    setShippingContent(shippingResponse.data.content || '');
+                    setCancellationContent(cancellationResponse.data.content || '');
+
+                } catch (error) {
+                    console.error('Error fetching policy content:', error);
+                }
+            };
+
+            fetchData();
+        }
+    }, [adminId]);
+
+    const handleSave = (policyType) => {
+        let apiUrl = '';
+
+        switch (policyType) {
+            case 'terms':
+                
+                apiUrl = 'http://localhost:5001/api/policy/terms';
+                break;
+            case 'privacy':
+                apiUrl = 'http://localhost:5001/api/policy/privacy';
+                break;
+            case 'shipping':
+                apiUrl = 'http://localhost:5001/api/policy/shipping';
+                break;
+            case 'cancellation':
+                apiUrl = 'http://localhost:5001/api/policy/cancellation';
+                break;
+            default:
+                return;
+        }
+
+        const formData = new FormData();
+
+        // Append adminId and content to FormData
+        if (adminId) {
+            formData.append('adminId', adminId);
+        }
+        formData.append('policyType', policyType);
+
+        switch (policyType) {
+            case 'terms':
+                formData.append('content', termsContent);
+                break;
+            case 'privacy':
+                formData.append('content', privacyContent);
+                break;
+            case 'shipping':
+                formData.append('content', shippingContent);
+                break;
+            case 'cancellation':
+                formData.append('content', cancellationContent);
+                break;
+            default:
+                break;
+        }
+
+        axios.post(apiUrl, formData)
             .then(response => {
                 console.log(`${policyType} saved successfully:`, response.data);
             })
@@ -29,7 +99,6 @@ const PoliciesAndTerms = () => {
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Policies Management</h1>
             <div className="border border-gray-300 rounded-lg p-4">
-
                 {/* Terms and Conditions */}
                 <div className='mb-10'>
                     <h2 className="text-xl font-semibold mb-4">Terms and Conditions</h2>
@@ -105,7 +174,6 @@ const PoliciesAndTerms = () => {
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
     );
