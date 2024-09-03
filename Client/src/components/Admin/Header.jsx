@@ -114,14 +114,14 @@
 //                             <Link to="/admin/account" className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Settings</Link>
 //                             <Link to="/support" className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Support</Link>
 //                             {/* <Link to="/smtp-setting" className="block py-2 px-4 text-gray-800 hover:bg-gray-200">SMTP Setting</Link> */}
-                          
+
 //                             <button
 //                                 onClick={handleLogout}
 //                                 className="block py-2 px-4 text-gray-800 hover:bg-gray-200 w-full text-left"
 //                             >
 //                                 Logout
 //                             </button>
-                        
+
 //                         </div>
 //                     )}
 //                 </div>
@@ -194,7 +194,7 @@
 //           dispatch(setOnlineStatus(online)); // Revert the status if there’s an error
 //         }
 //       };
-    
+
 
 //     const toggleProfileMenu = () => {
 //         setProfileMenuOpen(!profileMenuOpen);
@@ -376,10 +376,15 @@
 
 // export default Header;
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOnlineStatus, toggleOnlineStatus } from '../../slice/adminSlice';
-import { FaToggleOn, FaToggleOff, FaUserCircle, FaBell, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
+import { setOnlineStatus, } from '../../slice/adminSlice';
+// import { FaToggleOn, FaToggleOff,FaTachometerAlt,FaBox, FaUserCircle, FaBell, FaChevronDown, FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes,  FaBell, FaChevronDown, FaToggleOn, FaToggleOff, FaUserCircle, FaTachometerAlt, FaBox, FaList, FaUtensils, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { MdMenuBook, MdOutlinePolicy } from 'react-icons/md';
+import { FiYoutube } from 'react-icons/fi';
+import { RiAccountPinCircleLine } from 'react-icons/ri';
+import { TbPremiumRights } from 'react-icons/tb';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useGetProfileQuery, useUpdateStatusMutation } from '../../services/adminApi';
@@ -387,6 +392,7 @@ import logo from 'D:/Node and React/Foodiv/Client/public/assests/lg.svg';
 
 const Header = () => {
   const token = Cookies.get('token');
+  const sidebarRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const online = useSelector((state) => state.admin.online);
@@ -494,8 +500,8 @@ const Header = () => {
           {profileMenuOpen && (
             <div className={`absolute right-0 mt-2 bg-white shadow-lg rounded-lg p-2 text-sm duration-300 ${profileMenuOpen ? 'w-48 opacity-100' : 'w-0 opacity-0 '}`}>
               <Link to="/admin/account" onClick={() => setProfileMenuOpen(false)} className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Profile</Link>
-              <Link to="/admin/settings" onClick={() => setProfileMenuOpen(false)} className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Settings</Link>
-              <Link to="/support" onClick={() => setProfileMenuOpen(false)} className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Support</Link>
+              <Link to="/admin/account" onClick={() => setProfileMenuOpen(false)} className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Settings</Link>
+              <Link to="/admin/support" onClick={() => setProfileMenuOpen(false)} className="block py-2 px-4 text-gray-800 hover:bg-gray-200">Support</Link>
               <button onClick={handleLogout} className="block py-2 px-4 text-gray-800 hover:bg-gray-200 w-full text-left">
                 Logout
               </button>
@@ -523,8 +529,7 @@ const Header = () => {
             <div className="flex flex-col items-start md:p-4 sm:p-3 p-2 md:space-y-4 space-y-2 mt-5">
               <Link to="/admin/dashboard" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
                 <FaTachometerAlt size={18} />
-                <span>Dashboard</span>
-              </Link>
+                <span>Dashboard</span>                             </Link>
               <Link to="/admin/orders/active" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
                 <FaBox size={18} />
                 <span>Active Orders</span>
@@ -538,17 +543,29 @@ const Header = () => {
                 <span>Menu</span>
               </Link>
               <Link to="/admin/categories" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
-                <FaTags size={18} />
+                <MdMenuBook size={18} />
                 <span>Categories</span>
               </Link>
-              <Link to="/admin/users" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
-                <FaUsers size={18} />
-                <span>Users</span>
+              <Link to="/admin/subscriptions" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
+                <TbPremiumRights size={18} />
+                <span>Subscriptions</span>
               </Link>
-              <Link to="/admin/reports" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
-                <FaChartLine size={18} />
-                <span>Reports</span>
+              <Link to="/admin/policies" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>                                 <MdOutlinePolicy size={18} />
+                <span>Manage Policies</span>
               </Link>
+              <Link to="/admin/account" className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
+                <RiAccountPinCircleLine size={18} />
+                <span>My Account</span>
+              </Link>
+              <Link to='https://www.youtube.com/@foodiv' className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left" onClick={handleMenuClick}>
+                <FiYoutube size={18} />
+                <span>Foodiv Tutorials</span>
+              </Link>
+
+              {/* <button onClick={handleLogout} className="flex items-center text-sm space-x-2 text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-lg w-full text-left">
+                                <FaSignOutAlt size={18} />
+                                 <span>Logout</span>
+                            </button> */}
             </div>
           </div>
         </div>
