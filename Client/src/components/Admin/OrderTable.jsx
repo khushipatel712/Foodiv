@@ -333,9 +333,6 @@ const OrderTable = () => {
             filtered = filtered.filter(order => new Date(order.createdAt) >= filters.fromDate);
         }
 
-        // if (filters.toDate) {
-        //     filtered = filtered.filter(order => new Date(order.createdAt) <= filters.toDate);
-        // }
 
         setFilteredOrders(filtered);
     };

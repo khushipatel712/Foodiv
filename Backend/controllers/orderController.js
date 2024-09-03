@@ -1,28 +1,143 @@
 const UserOrderDetail = require('../Models/UserOrderDetail');
+// const razorpayInstance = require('../config/razorpayConfig');
+const { config } = require('dotenv');
+const Razorpay = require('razorpay');
+config();
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
+
+// exports.postOrderDetails = async (req, res) => {
+//   console.log(req.body);
+
+//   const order = new UserOrderDetail({
+//     admin: req.body.adminId,
+//     contactDetail: req.body.contactInfo,
+//     transactionDetail: req.body.paymentInfo,
+//     orderType: req.body.orderDetail,
+//     cartItem: req.body.cartItems,
+//     totalAmount: req.body.totalAmount,
+//     orderStatus: req.body.orderStatus || "New Order",
+//   });
+
+//   try {
+//     // Step 1: Check if the payment type is Razorpay
+//     if (req.body.paymentInfo === "razorpay") {
+//       // Create a Razorpay order
+//       const razorpayOrder = await razorpay.orders.create({
+//         amount: req.body.totalAmount * 100, // Amount in paisa (smallest currency unit)
+//         currency: "INR",
+//         receipt: `receipt_order_${Date.now()}`,
+//         payment_capture: 1, // Auto-capture payment
+//       });
 
 
-exports.postorderDeatils = async (req, res) => {
+//       console.log('Razorpay Order Response:', razorpayOrder);
 
-    console.log(req.body)
-    const order = new UserOrderDetail({
-        admin: req.body.adminId,
-        contactDetail: req.body.contactInfo.contactInfo,
-        transactionDetail: req.body.paymentInfo.paymentType,
-        orderType: req.body.orderDetail,
-        cartItem: req.body.cartItem.cartItems,
-        totalAmount: req.body.cartItem.totalAmount,
-        orderStatus: req.body.orderStatus || "New Order"
+//       if (!razorpayOrder || !razorpayOrder.id) {
+//         throw new Error('Failed to create Razorpay order');
+//       }
+
+  
+//       order.razorpayOrderId = razorpayOrder.id;
+//     }
+
+  
+//     const savedOrder = await order.save();
+//     console.log('Order saved successfully:', savedOrder);
+
+//     // Respond with the saved order details
+//     res.status(201).json({
+//       order: savedOrder,
+//       razorpayOrderId: order.razorpayOrderId || null, // Only include if Razorpay was used
+//       key: req.body.paymentInfo === "razorpay" ? process.env.RAZORPAY_KEY_ID : null, // Send Razorpay Key ID only if Razorpay was used
+//     });
+//   } catch (error) {
+//     console.error('Error processing order:', error);
+//     res.status(500).json({ error: 'Failed to process order' });
+//   }
+// };
+
+exports.verifyPayment = async (req, res) => {
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
+  const crypto = require('crypto');
+
+  // Step 1: Create a HMAC SHA256 hash using the Razorpay secret key
+  const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .digest('hex');
+
+  // Step 2: Compare the generated signature with the received signature
+  if (generatedSignature === razorpay_signature) {
+      // Payment verified successfully
+      res.status(200).json({ message: 'Payment verified successfully' });
+  } else {
+      // Payment verification failed
+      res.status(400).json({ error: 'Payment verification failed' });
+  }
+};
+
+exports.createRazorpayOrder = async (req, res) => {
+  console.log(req.body);
+
+  try {
+    const { totalAmount, paymentInfo } = req.body;
+
+    if (paymentInfo.paymentType === 'razorpay') {
+      const razorpayOrder = await razorpay.orders.create({
+        amount: totalAmount * 100, // Amount in paisa (smallest currency unit)
+        currency: "INR",
+        receipt: `receipt_order_${Date.now()}`,
+        payment_capture: 1,
       });
-      
-      try {
-        const savedOrder = await order.save(); // Save the order to the database
-        console.log('Order saved successfully:', savedOrder);
-        res.status(201).json(savedOrder); // Respond with the saved order
-      } catch (error) {
-        console.error('Error saving order:', error);
-        res.status(500).json({ error: 'Failed to save order' }); // Respond with an error
+
+      if (!razorpayOrder || !razorpayOrder.id) {
+        throw new Error('Failed to create Razorpay order');
       }
-}
+
+      res.status(200).json({
+        razorpayOrderId: razorpayOrder.id,
+        key: process.env.RAZORPAY_KEY_ID,
+      });
+    } else {
+      res.status(400).json({ error: 'Invalid payment type' });
+    }
+  } catch (error) {
+    console.error('Error creating Razorpay order:', error);
+    res.status(500).json({ error: 'Failed to create Razorpay order' });
+  }
+};
+
+// Endpoint to save order details after payment verification
+exports.postorderDetails = async (req, res) => {
+  console.log(req.body);
+
+  const order = new UserOrderDetail({
+    admin: req.body.adminId,
+    contactDetail: req.body.contactInfo,
+    transactionDetail: req.body.paymentInfo,
+    orderType: req.body.orderDetail,
+    cartItem: req.body.cartItems,
+    totalAmount: req.body.totalAmount,
+    orderStatus: req.body.orderStatus || "New Order",
+    razorpayOrderId: req.body.razorpayOrderId || null, // Store Razorpay Order ID if applicable
+  });
+
+  try {
+    const savedOrder = await order.save();
+    console.log('Order saved successfully:', savedOrder);
+
+    res.status(201).json({ order: savedOrder });
+  } catch (error) {
+    console.error('Error saving order:', error);
+    res.status(500).json({ error: 'Failed to save order' });
+  }
+};
+
+
 
 exports.updateOrderStatus = async (req, res) => {
   try {
