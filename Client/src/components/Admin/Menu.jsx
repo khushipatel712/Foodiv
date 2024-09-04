@@ -115,7 +115,7 @@ const Menu = () => {
                             </button>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-4 w-fit">
                             {menuItems
                                 .filter(item => item.category && item.category.categoryName === category.categoryName)
                                 .map(item => (

@@ -78,17 +78,17 @@ const CartView = () => {
             <div className="flex justify-between items-start">
                 <div className="w-full">
                     <div className='flex justify-between'>
-                        <div className="text-xl font-semibold mb-4">My Cart</div>
+                        <div className="sm:text-xl  text-lg font-semibold mb-4">My Cart</div>
                         <div className="ml-4">
                             <button
                                 onClick={handleExploreClick}
-                                className="border border-orange-500 text-orange-500 px-3 py-[6px] rounded-lg hover:bg-orange-500 hover:text-white"
+                                className="border sm:text-base text-sm border-orange-500 text-orange-500 px-2 py-1 sm:px-3 sm:py-[6px] rounded-lg hover:bg-orange-500 hover:text-white"
                             >
                                 Explore more
                             </button>
                         </div>
                     </div>
-                    <div className="flex flex-col space-y-6 lg:px-20 px-10 mt-4">
+                    <div className="flex flex-col sm:space-y-6 space-y-4 lg:px-20 px-2 mt-4">
                         {cartItems.map((item) => (
                             <div key={item.id} className="flex justify-between items-center">
                                 <div className="flex flex-col items-start">
@@ -100,7 +100,7 @@ const CartView = () => {
                                     </div>
                                     <span className="text-sm mt-2">₹{item.price}.00</span>
                                 </div>
-                                <div className="flex items-center shadow-lg border rounded-md py-[6px] px-4 space-x-4">
+                                <div className="flex items-center shadow-lg border rounded-md px-1  py-[2px] sm:py-[6px] sm:px-4 space-x-4">
                                     <button
                                         onClick={() => handleQuantityChange(item.id, -1)}
                                         className="text-red-500 font-bold text-2xl"
@@ -123,7 +123,7 @@ const CartView = () => {
             </div>
 
             <div className="w-full lg:w-[40%] ml-auto border shadow">
-                <div className="text-2xl font-semibold mb-4 p-4 bg-gray-100">Bill Summary</div>
+                <div className="sm:text-2xl text-xl font-semibold mb-4 p-4 bg-gray-100">Bill Summary</div>
                 <div className='p-4'>
                     <div className="flex justify-between mb-4">
                         <span>Items Total</span>
@@ -136,7 +136,7 @@ const CartView = () => {
                     <div className='flex justify-center'>
                         <button
                             onClick={handleCheckout}
-                            className="w-auto px-6 py-2 bg-orange-600 text-white text-lg rounded"
+                            className="w-auto px-3 py-1 text-base md:px-6 md:py-2 bg-orange-600 text-white sm:text-lg rounded"
                         >
                             Proceed to checkout
                         </button>

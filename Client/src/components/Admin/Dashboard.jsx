@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { useGetProfileQuery } from '../../services/adminApi';
+import { FaLink } from "react-icons/fa";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -98,20 +99,31 @@ const Dashboard = () => {
   }, [adminId]);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-100 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-6 bg-gray-100 min-h-screen ">
       {/* Store Link Section */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6">
+         <div className='flex justify-center'> 
+    
+      <div className="bg-white p-4 rounded-lg shadow mb-6 w-fit grid grid-cols-1 lg:pr-20 border-b-2 border-blue-400">
         <h2 className="text-lg font-semibold mb-2">Store Link</h2>
-        <p className="text-gray-600">Share your web store's link on social media to attract more customers.</p>
-        <a
-          href={dynamicUrl}
-          className="text-blue-500 flex items-center mt-2"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {dynamicUrl}
-        </a>
+        <div className='h-[0.5px] w-full bg-gray-300 m-2'></div>
+        <p className="text-gray-500 text-base">Share your web store's link on social media to attract more customers.</p>
+        <div className='flex  items-center gap-3 mt-2'>
+          <div>
+            <a
+              href={dynamicUrl}
+              className="text-blue-500 text-sm sm:text-base flex items-center hover:text-blue-600"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {dynamicUrl}
+            </a>
+          </div>
+          <div>
+            <FaLink className='px-2 py-2 bg-blue-500 size-8 rounded-md text-white' />
+          </div>
+        </div>
       </div>
+   </div>
 
       {/* Dashboard Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -128,14 +140,16 @@ const Dashboard = () => {
           { label: "Today's Revenue", value: stats.todaysRevenue, iconColor: "bg-green-500" },
           { label: "My Customers", value: stats.myCustomers, iconColor: "bg-blue-500" }
         ].map((stat, index) => (
-          <div key={index} className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+          <div key={index} className="bg-white p-4 rounded-lg shadow flex items-center justify-between hover:transition-transform hover:-translate-y-2 translate-y-0 duration-300 transition-transform hover:duration-300 hover:border-b-2 hover:border-blue-500">
             <div>
               <h3 className="text-sm font-medium text-gray-600">{stat.label}</h3>
               <p className="text-2xl font-semibold mt-1">{stat.value}</p>
             </div>
-            <div className={`w-12 h-12 ${stat.iconColor} text-white flex items-center justify-center rounded-xl transform rotate-45 hover:rotate-0`}>
-              <img src={order} className="w-8 h-8 transform -rotate-45 hover:rotate-0" alt="Icon" />
+            {/* <div className='transform rotate-45 hover:rotate-0'> */}
+            <div className={`w-10 h-10 ${stat.iconColor} text-white flex items-center justify-center rounded-xl rotate-45`}>
+              <img src={order} className="w-6 h-6 -rotate-45" alt="Icon" />
             </div>
+            {/* </div> */}
           </div>
         ))}
       </div>

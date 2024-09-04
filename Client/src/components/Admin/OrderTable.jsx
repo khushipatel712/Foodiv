@@ -359,7 +359,7 @@ const OrderTable = () => {
 
     const getOrderTypeClass = (orderType) => {
         switch (orderType) {
-            case 'Dine-In':
+            case 'DineIn':
                 return 'bg-yellow-500';
             case 'Takeaway':
                 return 'bg-blue-500';
@@ -435,7 +435,7 @@ const OrderTable = () => {
                     className="border px-2 py-1 text-sm rounded w-full"
                 >
                     <option value="All">Select Order Types</option>
-                    <option value="Dine-In">Dine-In</option>
+                    <option value="DineIn">Dine-In</option>
                     <option value="Takeaway">Takeaway</option>
                     <option value="Delivery">Delivery</option>
                     <option value="Table/Room">Table/Room</option>

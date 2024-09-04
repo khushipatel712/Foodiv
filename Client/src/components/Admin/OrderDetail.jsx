@@ -324,7 +324,9 @@ const OrderDetails = () => {
                     <span className="px-2 py-1 ml-1 text-sm bg-gray-100 text-gray-500 rounded">{orderDetails.orderType}</span>
                 </div>
                 <div>Payment Mode:
-                    <span className="px-2 py-1 ml-1 text-sm bg-red-100 text-red-500 rounded">{orderDetails.transactionDetail}</span>
+                <span className="px-2 py-1 ml-1 text-sm bg-red-100 text-red-500 rounded">
+  {orderDetails.paymentType || 'N/A'}
+</span>
                 </div>
                 <div>
                     Payment Status:

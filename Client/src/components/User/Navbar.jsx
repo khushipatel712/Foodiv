@@ -85,7 +85,7 @@ const Navbar = () => {
             <button onClick={toggleMenu} className="focus:outline-none">
               <IoMdClose className='size-5' />
             </button>
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-6 space-y-4 text-sm sm:text-base">
               <li><button onClick={()=>handleNavigation (`/${id}/user/menu`)} className="block text-orange-500 hover:text-orange-700">Home</button></li>
               {!
               token ? (
@@ -109,7 +109,7 @@ const Navbar = () => {
                     </button>
                   </li>
 
-                  
+
                 </>
               ) : (
                 <li>
@@ -128,10 +128,10 @@ const Navbar = () => {
               <li><button  onClick={()=>handleNavigation( `/${id}/shipping`)} className="block text-orange-500 hover:text-orange-700">Shipping Policy</button></li>
               {profile && (
                 <li className="mt-4 text-gray-700">
-                  <p><strong>Restaurant Name:</strong> {profile.restaurantName}</p>
-                  <p><strong>Email:</strong> {profile.email}</p>
-                  <p><strong>Mobile Number:</strong> {profile.mobileNumber}</p>
-                  <p><strong>Address:</strong> {profile.address}, {profile.city}, {profile.state}</p>
+                  <div> <span className='font-bold'>Restaurant Name:</span>{profile.restaurantName}</div>
+                  <div> <span className='font-bold'>Email:</span> {profile.email}</div>
+                  <div> <span className='font-bold'>Mobile Number:</span> {profile.mobileNumber}</div>
+                  <div> <span className='font-bold'>Address:</span> {profile.address}, {profile.city}, {profile.state}</div>
                 </li>
               )}
               {error && <li className="mt-4 text-red-500">Error fetching profile data.</li>}

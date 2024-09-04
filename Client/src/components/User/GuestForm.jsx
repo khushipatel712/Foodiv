@@ -155,7 +155,7 @@ const GuestForm = ({ goBack }) => {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-semibold text-lg mb-2" htmlFor="instruction">Instruction</label>
+                    <label className="block text-gray-700 font-semibold sm:text-lg text-sm mb-2" htmlFor="instruction">Instruction</label>
                     <textarea
                         type="text"
                         id="instruction"

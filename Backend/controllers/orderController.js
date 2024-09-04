@@ -112,20 +112,27 @@ exports.createRazorpayOrder = async (req, res) => {
 };
 
 // Endpoint to save order details after payment verification
-exports.postorderDetails = async (req, res) => {
-  console.log(req.body);
-
-  const order = new UserOrderDetail({
-    admin: req.body.adminId,
-    contactDetail: req.body.contactInfo,
-    transactionDetail: req.body.paymentInfo,
-    orderType: req.body.orderDetail,
-    cartItem: req.body.cartItems,
-    totalAmount: req.body.totalAmount,
-    orderStatus: req.body.orderStatus || "New Order",
-    razorpayOrderId: req.body.razorpayOrderId || null, // Store Razorpay Order ID if applicable
-  });
-
+// exports.postorderDetails = async (req, res) => {
+  exports.postorderDetails = async (req, res) => {
+    console.log(req.body);
+  
+    // Determine payment status based on transaction detail
+    const isRazorpayTransaction = req.body.paymentInfo && req.body.paymentInfo.orderId;
+     
+    const order = new UserOrderDetail({
+      admin: req.body.adminId,
+      contactDetail: req.body.contactInfo,
+      transactionDetail: req.body.paymentInfo,
+      paymentType: req.body.paymentInfo === 'cashOnDelivery'
+      ? req.body.paymentInfo
+      : req.body.paymentInfo.paymentType,
+      orderType: req.body.orderDetail,
+      cartItem: req.body.cartItems,
+      totalAmount: req.body.totalAmount,
+      orderStatus: req.body.orderStatus || "New Order",
+      paymentStatus: isRazorpayTransaction ? 'paid' : 'unpaid', // Set paymentStatus based on transaction detail
+      razorpayOrderId: req.body.paymentInfo.orderId || null, // Store Razorpay Order ID if applicable
+    });
   try {
     const savedOrder = await order.save();
     console.log('Order saved successfully:', savedOrder);

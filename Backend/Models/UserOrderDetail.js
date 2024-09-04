@@ -11,6 +11,7 @@ const userOrderDetailSchema = new Schema({
   contactDetail: Object,
   orderType: String,
   transactionDetail: Object,
+  paymentType :Object,
   cartItem: Object,
   totalAmount: Object,
   orderStatus: {
@@ -22,6 +23,10 @@ const userOrderDetailSchema = new Schema({
     required: true,
     default: 'unpaid'
   },
+  razorpayOrderId: {
+    type: String,
+    default: null
+  }
 }, {
   timestamps: true 
 });

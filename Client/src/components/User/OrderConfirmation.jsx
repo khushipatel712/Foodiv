@@ -33,7 +33,7 @@ const OrderConfirmation = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="bg-gray-100 rounded-lg shadow-lg p-8 sm:p-12 lg:p-20 w-2xl text-center">
+      <div className="bg-gray-100 rounded-lg shadow-lg  sm:p-12 lg:p-20 w-2xl text-center">
         <div className="flex justify-center items-center mb-4">
           <BsFillPatchCheckFill className="text-orange-500 text-9xl" />
         </div>

@@ -69,13 +69,13 @@ const Sidebar = () => {
             {item.subItems ? (
               <div>
                 <button
-                  className={`flex items-center w-full py-2 px-4 text-left ${
+                  className={`flex items-center w-full py-3 px-4 text-left ${
                     openSubMenu === index ? 'bg-gray-100' : 'text-gray-800'
                   } hover:bg-gray-200 rounded-md focus:outline-none`}
                   onClick={() => handleSubMenuToggle(index)}
                 >
                   {item.icon}
-                  <span className="ml-3 text-base">{item.title}</span>
+                  <span className="ml-3 text-lg">{item.title}</span>
                 </button>
                 {openSubMenu === index && (
                   <div className="pl-8 mt-2 space-y-1">
@@ -100,16 +100,16 @@ const Sidebar = () => {
                 }}
               >
                 {item.icon}
-                <span className="ml-3 text-base">{item.title}</span>
+                <span className="ml-3 text-lg">{item.title}</span>
               </button>
             ) : (
               <NavLink
                 to={item.path}
-                className="flex items-center w-full py-2 px-4 text-left text-gray-800 hover:bg-gray-200 rounded-md"
+                className="flex items-center w-full py-3 px-4 text-left text-gray-800 hover:bg-gray-200 rounded-md"
                 activeclassname="bg-gray-200 text-gray-900"
               >
                 {item.icon}
-                <span className="ml-3 text-base">{item.title}</span>
+                <span className="ml-3 text-lg">{item.title}</span>
               </NavLink>
             )}
           </div>
