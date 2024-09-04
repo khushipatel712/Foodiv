@@ -323,149 +323,129 @@
 
 
         
-    import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { GrSquare } from "react-icons/gr";
-import { useNavigate, useParams } from 'react-router-dom';
-import GuestForm from './GuestForm';
-import LoginForm from './LoginForm';
-import RegisterModal from './RegisterModal';
-import Cookies from 'js-cookie';
-import axios from 'axios';
-import {
-    getDrawerDataFromDB,
-    addPaymentTypeToDB,
-    getPaymentTypeFromDB,
-    getContactInformationFromDB,
-    updateDrawerDataInDB,
-    clearMultipleStoresFromDB,
-    getOrderTypeFromDB
-} from './IndexdDBUtils';
-
-const Checkout = () => {
-    const [formType, setFormType] = useState(null);
-    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-    const [drawerData, setDrawerData] = useState({ cartItems: [], totalAmount: 0, orderType: null });
-    const [paymentType, setPaymentType] = useState('');
-    const [orderType, setOrderType] = useState('');
-    const [contactInfo, setContactInfo] = useState(null);
-    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
-    const { id } = useParams();
-    const navigate = useNavigate();
-
-    // Replace with your actual Razorpay key ID
-    // const RAZORPAY_KEY_ID = 'rzp_test_4kJGZ6vUcstgUm';
-
-    useEffect(() => {
-        const token = Cookies.get('userToken');
-        if (token) {
-            setFormType('guest');
-        }
-    }, []);
-
-    useEffect(() => {
-        const fetchDrawerData = async () => {
-            const data = await getDrawerDataFromDB();
-            setDrawerData(data);
-        };
-
-        fetchDrawerData();
-    }, []);
-
-    useLayoutEffect(() => {
-        if (paymentType) {
-            savePaymentType();
-        }
-    }, [paymentType]);
-
-    const savePaymentType = async () => {
-        await addPaymentTypeToDB(paymentType);
-    };
-
-    const handlePaymentTypeChange = (type) => {
-        setPaymentType(type);
-    };
-
-    const fetchPaymentType = async () => {
-        try {
-            const { paymentType } = await getPaymentTypeFromDB();
-            // console.log("first", paymentType)
-            if (paymentType) {
-                setPaymentType(paymentType);
-            }
-        } catch (error) {
-            console.error("Failed to fetch payment type", error);
-        }
-    };
-
-    const fetchOrderType = async () => {
-        try {
-            const fetchedOrderType = await getOrderTypeFromDB();
-            setOrderType(fetchedOrderType);
-        } catch (error) {
-            console.error("Failed to fetch order type", error);
-        }
-    };
-
-    const fetchContactInformation = async () => {
-        try {
-            const contactInfo = await getContactInformationFromDB();
-            setContactInfo(contactInfo);
-        } catch (error) {
-            console.error("Failed to fetch contact information", error);
-        }
-    };
-
-    const handlePlaceOrder = async () => {
-        setIsPlacingOrder(true);
-
-        try {
-            await fetchPaymentType();
-            await fetchContactInformation();
-            await fetchOrderType();
-            await getOrderTypeFromDB();
-
-
-            if (!paymentType) {
-                alert('Please select a payment method.');
-                setIsPlacingOrder(false);
-                return;
-            }
-
-            if (!orderType) {
-                alert('Please select an order type');
-            }
-
-            if (!contactInfo?.contactInfo?.name || !contactInfo?.contactInfo?.mobile) {
-                alert("Name and Mobile Number are required.");
-                setIsPlacingOrder(false);
-                return;
-            }
-
-            await updateDrawerDataInDB(drawerData.cartItems, drawerData.totalAmount);
-
-            //   const orderType = await getOrderTypeFromDB();
-
-            const orderData = {
-                cartItems: drawerData.cartItems,
-                totalAmount: drawerData.totalAmount,
-                contactInfo: contactInfo.contactInfo,
-                paymentInfo: paymentType,
-                orderDetail: orderType,
-                adminId: id,
+        import React, { useState, useEffect, useLayoutEffect } from 'react';
+        import { GrSquare } from "react-icons/gr";
+        import { useNavigate, useParams } from 'react-router-dom';
+        import GuestForm from './GuestForm';
+        import LoginForm from './LoginForm';
+        import RegisterModal from './RegisterModal';
+        import Cookies from 'js-cookie';
+        import axios from 'axios';
+        import {
+            getDrawerDataFromDB,
+            addPaymentTypeToDB,
+            getPaymentTypeFromDB,
+            getContactInformationFromDB,
+            updateDrawerDataInDB,
+            clearMultipleStoresFromDB,
+            getOrderTypeFromDB
+        } from './IndexdDBUtils';
+        
+        const Checkout = () => {
+            const [formType, setFormType] = useState(null);
+            const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+            const [drawerData, setDrawerData] = useState({ cartItems: [], totalAmount: 0, orderType: null });
+            const [paymentType, setPaymentType] = useState('');
+            const [orderType, setOrderType] = useState('');
+            const [contactInfo, setContactInfo] = useState(null);
+            const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+            const { id } = useParams();
+            const navigate = useNavigate();
+        
+            useEffect(() => {
+                const token = Cookies.get('userToken');
+                if (token) {
+                    setFormType('guest');
+                }
+            }, []);
+        
+            useEffect(() => {
+                const fetchInitialData = async () => {
+                    const [drawerData, paymentType, orderType, contactInfo] = await Promise.all([
+                        getDrawerDataFromDB(),
+                        getPaymentTypeFromDB(),
+                        getOrderTypeFromDB(),
+                        getContactInformationFromDB()
+                    ]);
+        
+                    setDrawerData(drawerData);
+                    setPaymentType(paymentType?.paymentType || '');
+                    setOrderType(orderType || '');
+                    setContactInfo(contactInfo);
+                };
+        
+                fetchInitialData();
+            }, []);
+        
+            useLayoutEffect(() => {
+                if (paymentType) {
+                    addPaymentTypeToDB(paymentType);
+                }
+            }, [paymentType]);
+        
+            const handlePaymentTypeChange = (type) => {
+                setPaymentType(type);
             };
-
-            if (paymentType === 'razorpay') {
-                await initiateRazorpayPayment(orderData);
-            } else if (paymentType === 'cashOnDelivery') {
-                await placeOrder(orderData);
-            }
-
-        } catch (error) {
-            console.error("Failed to place the order", error.message || error);
-            alert('Failed to place the order. Please try again.');
-            setIsPlacingOrder(false);
-        }
-    };
+        
+            const handlePlaceOrder = async () => {
+                setIsPlacingOrder(true);
+        
+                try {
+                    // Fetch the latest data
+                    const [latestPaymentType, latestOrderType, latestContactInfo] = await Promise.all([
+                        getPaymentTypeFromDB(),
+                        getOrderTypeFromDB(),
+                        getContactInformationFromDB()
+                    ]);
+        
+                    // Update state with the latest data
+                    setPaymentType(latestPaymentType?.paymentType || '');
+                    setOrderType(latestOrderType || '');
+                    setContactInfo(latestContactInfo);
+        
+                    // Validate the data
+                    if (!latestOrderType) {
+                        alert('Please select an order type');
+                        setIsPlacingOrder(false);
+                        return;
+                    }
+        
+                    if (!latestContactInfo?.contactInfo?.name || !latestContactInfo?.contactInfo?.mobile) {
+                        alert("Name and Mobile Number are required.");
+                        setIsPlacingOrder(false);
+                        return;
+                    }
+        
+                    if (!latestPaymentType?.paymentType) {
+                        alert('Please select a payment method.');
+                        setIsPlacingOrder(false);
+                        return;
+                    }
+        
+                    // Update drawer data
+                    await updateDrawerDataInDB(drawerData.cartItems, drawerData.totalAmount);
+        
+                    const orderData = {
+                        cartItems: drawerData.cartItems,
+                        totalAmount: drawerData.totalAmount,
+                        contactInfo: latestContactInfo.contactInfo,
+                        paymentInfo: latestPaymentType.paymentType,
+                        orderDetail: latestOrderType,
+                        adminId: id,
+                    };
+        
+                    if (latestPaymentType.paymentType === 'razorpay') {
+                        await initiateRazorpayPayment(orderData);
+                    } else if (latestPaymentType.paymentType === 'cashOnDelivery') {
+                        await placeOrder(orderData);
+                    }
+        
+                } catch (error) {
+                    console.error("Failed to place the order", error.message || error);
+                    alert('Failed to place the order. Please try again.');
+                    setIsPlacingOrder(false);
+                }
+            };
     
     const initiateRazorpayPayment = async (orderData) => {
         try {

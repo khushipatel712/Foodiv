@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { useParams } from 'react-router-dom';
@@ -17,6 +18,7 @@ const Navbar = () => {
 
   const { id } = useParams();
   const { data: fetchedProfile, error } = useGetProfileByIdQuery(id);
+  const navigate =useNavigate();
 
   useEffect(() => {
     if (fetchedProfile) {
@@ -37,9 +39,14 @@ const Navbar = () => {
     closeMenu();
   };
 
+  const handleNavigation = (path) => {
+    navigate(path);
+    closeMenu();
+};
+
   const handleCloseLoginModal = () => {
     setIsLoginModalOpen(false);
-    // Refresh the component by updating state
+   
     setToken(Cookies.get('userToken') || '');
   };
 
@@ -76,10 +83,10 @@ const Navbar = () => {
         <div className="fixed top-0 inset-y-0 h-fit right-0 justify-end bg-black bg-opacity-50 flex z-20">
           <div className="w-64 bg-white p-6 shadow-md">
             <button onClick={toggleMenu} className="focus:outline-none">
-              <IoMdClose size={24} />
+              <IoMdClose className='size-5' />
             </button>
             <ul className="mt-6 space-y-4">
-              <li><a href="#" className="block text-orange-500 hover:text-orange-700">Home</a></li>
+              <li><button onClick={()=>handleNavigation (`/${id}/user/menu`)} className="block text-orange-500 hover:text-orange-700">Home</button></li>
               {!
               token ? (
                 <>
@@ -101,6 +108,8 @@ const Navbar = () => {
                       Register
                     </button>
                   </li>
+
+                  
                 </>
               ) : (
                 <li>
@@ -113,10 +122,10 @@ const Navbar = () => {
                   </button>
                 </li>
               )}
-              <li><Link  to={`/${id}/terms`}  className="block text-orange-500 hover:text-orange-700">Terms and Conditions</Link></li>
-              <li><Link  to={`/${id}/privacy`} className="block text-orange-500 hover:text-orange-700">Privacy Policy</Link></li>
-              <li><Link  to={`/${id}/cancellation`} className="block text-orange-500 hover:text-orange-700">Cancellation Policy</Link></li>
-              <li><Link  to={`/${id}/shipping`} className="block text-orange-500 hover:text-orange-700">Shipping Policy</Link></li>
+              <li><button  onClick={() => handleNavigation(`/${id}/terms`)} className="block text-orange-500 hover:text-orange-700">Terms and Conditions</button></li>
+              <li><button  onClick={()=>handleNavigation( `/${id}/privacy`)} className="block text-orange-500 hover:text-orange-700">Privacy Policy</button></li>
+              <li><button  onClick={()=>handleNavigation( `/${id}/cancellation`)} className="block text-orange-500 hover:text-orange-700">Cancellation Policy</button></li>
+              <li><button  onClick={()=>handleNavigation( `/${id}/shipping`)} className="block text-orange-500 hover:text-orange-700">Shipping Policy</button></li>
               {profile && (
                 <li className="mt-4 text-gray-700">
                   <p><strong>Restaurant Name:</strong> {profile.restaurantName}</p>
