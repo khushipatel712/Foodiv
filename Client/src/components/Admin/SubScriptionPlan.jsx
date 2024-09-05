@@ -124,7 +124,7 @@ const SubscriptionPlan = () => {
     ];
 
     return (
-        <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <div className="max-w-5xl mt-28 mx-auto p-6 bg-white rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-2">Subscription Plan</h2>
             <div className='w-full px-4 h-[0.5px] bg-gray-300 mb-6'></div>
             <p className="mb-4 text-lg font-medium">Get Your Restaurant Online Today!</p>

@@ -57,6 +57,11 @@ import PrivacyPolicyPage from './components/User/PrivacyPolicy';
 import ShippingPolicyPage from './components/User/ShippingPolicy';
 import CancellationPolicyPage from './components/User/CancellationPolicy';
 import PrivateRoute from './components/Admin/Pages/PrivateRoutes';
+import ContactUs from './components/SuperAdmin/Pages/ContactUs';
+import Partners from './components/SuperAdmin/Pages/Partners';
+import BlogMain from './components/SuperAdmin/Pages/BlogMain';
+import BlogDetail from './components/SuperAdmin/BlogDetail';
+import SystemApp from './components/SuperAdmin/SystemApp';
 function App() {
   return (
    <RegisterProvider>
@@ -66,6 +71,13 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          
+     <Route path="pricing" element={<SubscriptionPlan/>} /> 
+     <Route path="contact-us" element={< ContactUs/>} /> 
+     <Route path="partners" element={< Partners/>} /> 
+     <Route path="blogs" element={< BlogMain/>} /> 
+     <Route path="section" element={<SystemApp/>} /> 
+     <Route path="/blog/:category/:id" element={<BlogDetail />} />
           <Route path="*" element={<Footer />} />
         </Route>
 

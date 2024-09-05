@@ -18,7 +18,7 @@ const Navbar = () => {
     const menuItems = [
         { name: 'Online Ordering', path: '/online-ordering', submenu: true },
         { name: 'Pricing', path: '/pricing', submenu: false },
-        { name: 'Blog', path: '/blog', submenu: false },
+        { name: 'Blog', path: '/blogs', submenu: false },
         { name: 'Partners', path: '/partners', submenu: false },
         { name: 'Contact Us', path: '/contact-us', submenu: false },
         { name: 'Login', path: '/login', submenu: false }
