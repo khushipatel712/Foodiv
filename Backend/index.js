@@ -25,7 +25,7 @@ const userRoutes = require('./routes/userRoutes');
 const userOrderDetailRoutes = require('./routes/userOrderDetailRoutes');
 const usePolicyRoutes = require('./routes/policyRoutes');
 const supportRoutes = require('./routes/supportRoutes');
-
+const superAdminRoutes = require('./routes/superAdminRoutes');
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
@@ -40,8 +40,11 @@ app.use('/api', userRoutes);
 app.use('/api', userOrderDetailRoutes);
 app.use('/api/policy', usePolicyRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/api', superAdminRoutes);
 
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
+app.use('/public', express.static('public'));
 
 const port = process.env.PORT || 5002;
 app.listen(port, () => {

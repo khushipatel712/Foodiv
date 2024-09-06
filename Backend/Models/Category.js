@@ -23,7 +23,7 @@ const categorySchema = new mongoose.Schema({
     admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
-        required: true // Reference to the Admin model
+        required: true 
     },
     show:{
         type:Boolean,

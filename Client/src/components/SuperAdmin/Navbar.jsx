@@ -25,7 +25,7 @@ const Navbar = () => {
     ];
 
     const submenuItems = [
-        { name: 'Pizza Ordering System', path: '/pizza-ordering', icon: <FaPizzaSlice /> },
+        { name: 'Pizza Ordering System', path: '/section', icon: <FaPizzaSlice /> },
         { name: 'Alcohol Delivery Software', path: '/alcohol-delivery', icon: <FaBeer /> },
         { name: 'Tableside Ordering System', path: '/tableside-ordering', icon: <FaTable /> },
         { name: 'Restaurant POS System', path: '/restaurant-pos', icon: <FaUtensils /> },

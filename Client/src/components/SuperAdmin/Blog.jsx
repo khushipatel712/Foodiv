@@ -43,7 +43,7 @@ const Blog = () => {
                   <h4 className="text-xl text-left font-bold mb-2 hover:text-red-500 text-gray-800">
                     {news.title}
                   </h4>
-                  <p className="text-gray-600 text-sm mb-4 text-left">{news.summary}</p>
+                  <p className="text-gray-600 text-base mb-4 text-left">{news.summary}</p>
                  
                 </div>
                 <div className="text-center mx-10 bottom-0   bg-orange-600 text-white text-sm px-7 py-1 font-medium  rounded-t-2xl ">

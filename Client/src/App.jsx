@@ -62,6 +62,15 @@ import Partners from './components/SuperAdmin/Pages/Partners';
 import BlogMain from './components/SuperAdmin/Pages/BlogMain';
 import BlogDetail from './components/SuperAdmin/BlogDetail';
 import SystemApp from './components/SuperAdmin/SystemApp';
+import System1 from './components/SuperAdmin/Pages/System';
+import SuperAdminLogin from './components/SuperAdmin/Pages/SuperAdminLogin';
+// import Navbar1 from './components/SuperAdmin/Pages/dashboard/Navbar';
+// import Sidebar1 from './components/SuperAdmin/Pages/dashboard/Sidebar';
+import DashboardLayout from './components/SuperAdmin/Pages/dashboard/DashboardLayout';
+import AdminDashboard from '../src/components/SuperAdmin/Pages/dashboard/Dashboard';
+import AdminAccount from './components/SuperAdmin/Pages/dashboard/AdminAccount';
+import Dashboard1 from '../src/components/SuperAdmin/Pages/dashboard/Dashboard';
+
 function App() {
   return (
    <RegisterProvider>
@@ -76,7 +85,7 @@ function App() {
      <Route path="contact-us" element={< ContactUs/>} /> 
      <Route path="partners" element={< Partners/>} /> 
      <Route path="blogs" element={< BlogMain/>} /> 
-     <Route path="section" element={<SystemApp/>} /> 
+     <Route path="section" element={<System1/>} /> 
      <Route path="/blog/:category/:id" element={<BlogDetail />} />
           <Route path="*" element={<Footer />} />
         </Route>
@@ -108,6 +117,17 @@ function App() {
 
         <Route path='/register' element={<Register/>}/>
         <Route path='/login' element={<LoginForm/>}/>
+        <Route path='/superadmin/login' element={<SuperAdminLogin/>}/>
+
+
+        <Route path='/superadmin' element={<DashboardLayout/>}>
+        {/* <Route index  element={<DashboardLayout/>} /> */}
+              <Route index element={<AdminDashboard/>} />
+              <Route path="dashboard" element={<Dashboard1/>} />
+              <Route path="manage-account" element={<AdminAccount/>} />
+        </Route>
+
+        {/* <Route path='/superadmin/dashboard' element={<Sidebar1/>}/> */}
 
         {/* <Route path="/login" element={<LoginPage />} /> */}
       <Route path="/admin" element={<PrivateRoute element={AdminLayout} />}>
