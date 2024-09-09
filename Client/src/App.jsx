@@ -70,6 +70,15 @@ import DashboardLayout from './components/SuperAdmin/Pages/dashboard/DashboardLa
 import AdminDashboard from '../src/components/SuperAdmin/Pages/dashboard/Dashboard';
 import AdminAccount from './components/SuperAdmin/Pages/dashboard/AdminAccount';
 import Dashboard1 from '../src/components/SuperAdmin/Pages/dashboard/Dashboard';
+import AdminContentForm from './components/SuperAdmin/Pages/dashboard/AdminContentForm';
+import SystemDashboard from './components/SuperAdmin/Pages/dashboard/SystemDashboard';
+import SystemForm from './components/SuperAdmin/Pages/dashboard/SystemForm';
+import HeaderAdmin from './components/SuperAdmin/Pages/dashboard/Header';
+import FooterDashboard from './components/SuperAdmin/Pages/dashboard/FooterDashboard';
+import OnlineWebDashboard from './components/SuperAdmin/Pages/dashboard/OnlineWebDashboard';
+import ManageDashboard from './components/SuperAdmin/Pages/dashboard/ManageDashboard';
+import RestaurantDashboard from './components/SuperAdmin/Pages/dashboard/RestaurantDashboard';
+
 
 function App() {
   return (
@@ -125,6 +134,16 @@ function App() {
               <Route index element={<AdminDashboard/>} />
               <Route path="dashboard" element={<Dashboard1/>} />
               <Route path="manage-account" element={<AdminAccount/>} />
+              <Route path="system" element={<SystemDashboard />} />
+              <Route path="system/content" element={<AdminContentForm />} />
+        <Route path="systems/add" element={<SystemForm />} />
+        <Route path="systems/update/:slug" element={<SystemForm />} />
+        <Route path="header" element={<HeaderAdmin/>} />
+        <Route path="footer" element={<FooterDashboard/>} />
+        <Route path="onlineweb" element={<OnlineWebDashboard/>} />
+        <Route path="manage" element={<ManageDashboard/>} />
+        <Route path="restaurant" element={<RestaurantDashboard/>} />
+
         </Route>
 
         {/* <Route path='/superadmin/dashboard' element={<Sidebar1/>}/> */}

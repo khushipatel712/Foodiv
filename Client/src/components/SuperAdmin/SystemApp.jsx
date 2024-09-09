@@ -112,50 +112,6 @@ const contentData = [
     }
     ],
   },
-
-  //  {
-  //   title3: "Essential Features of Online Pizza Ordering System",
-
-  //   panel: [{
-  //     title: "Pizza Store App",
-  //     desc: "The Impressive Store App to run and manage your pizza delivery business seamlessly with the right technology and features.",
-  //     image3: blog2,
-  //     keypoints: [{
-  //       keytitle: "login",
-  //       keydetail: "Sign up and log in to the Takeaway Delivery System with an email or social credentials."
-  //     },
-  //     {
-  //       keytitle: "Interactive dashboard",
-  //       keydetail: "Create a digital menu for your Pizza store by adding your pizza offerings, images, and prices. Customise and update the menu anytime!"
-  //     },
-  //     {
-  //       keytitle: "login",
-  //       keydetail: "Sign up and log in to the Takeaway Delivery System with an email or social credentials."
-  //     },
-  //     {
-  //       keytitle: "login",
-  //       keydetail: "Sign up and log in to the Takeaway Delivery System with an email or social credentials."
-  //     },
-  //     {
-  //       keytitle: "login",
-  //       keydetail: "Sign up and log in to the Takeaway Delivery System with an email or social credentials."
-  //     },
-
-  //     ],
-  //   }
-  //   ],
-  // },
-
-  // {
-
-  //   title4: "Delivery Options",
-  //   content4: "With the online ordering system for takeaway, restaurant owners can offer three different types of takeaway deliveries:",
-  //   image4: blog,
-  //   points: [{
-  //     pointtitle: "hello",
-  //     pointdetail: "helllo"
-  //   }],
-  // },
   {
     faqs: {
       title: "FAQs For Online Takeaway Ordering System",

@@ -26,6 +26,15 @@ const userOrderDetailRoutes = require('./routes/userOrderDetailRoutes');
 const usePolicyRoutes = require('./routes/policyRoutes');
 const supportRoutes = require('./routes/supportRoutes');
 const superAdminRoutes = require('./routes/superAdminRoutes');
+const conentRoutes=require('./routes/conentRoutes');
+const systemRoutes=require('./routes/systemRoutes');
+const headerRoutes=require('./routes/headerRoutes');
+const footerRoutes=require('./routes/footerRoutes');
+const onlineWebRoutes = require('./routes/onlinewebRoutes');
+const manageRoutes = require('./routes/manageRoutes');
+const restaurantRoutes = require('./routes/restaurantRoutes');
+
+
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
@@ -41,6 +50,14 @@ app.use('/api', userOrderDetailRoutes);
 app.use('/api/policy', usePolicyRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api', superAdminRoutes);
+app.use('/api', conentRoutes);
+app.use('/api/systems', systemRoutes);
+app.use('/api/headers', headerRoutes);
+app.use('/api/footer', footerRoutes);
+app.use('/api', onlineWebRoutes);
+app.use('/api', manageRoutes);
+app.use('/api', restaurantRoutes);
+
 
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 

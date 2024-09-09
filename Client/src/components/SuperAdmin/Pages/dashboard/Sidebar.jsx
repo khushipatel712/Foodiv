@@ -7,18 +7,19 @@ import { RxDashboard } from "react-icons/rx";
 const navItems = [
   {
     title: 'Dashboard',
-    path: '/admin/dashboard',
+    path: '/superadmin',
     icon: <RxDashboard size={24} />,
   },
   {
     title: 'Home',
     icon: <FaHome size={24} />,
     subItems: [
-      { title: 'Banner', path: '/admin/banner', icon: <FaRegImage size={20} /> },
-      { title: 'Client', path: '/admin/client', icon: <FaUser size={20} /> },
-      { title: 'Counter', path: '/admin/counter', icon: <FaChartBar size={20} /> },
-      { title: 'Sector', path: '/admin/sector', icon: <FaIndustry size={20} /> },
-      { title: 'Why Choose Us', path: '/admin/whychooseus', icon: <FaQuestion size={20} /> },
+      { title: 'OnlineWeb', path: '/superadmin/onlineweb', icon: <FaRegImage size={20} /> },
+      { title: 'Manage', path: '/superadmin/manage', icon: <FaUser size={20} /> },
+
+      // { title: 'Counter', path: '/admin/counter', icon: <FaChartBar size={20} /> },
+      // { title: 'Sector', path: '/admin/sector', icon: <FaIndustry size={20} /> },
+      // { title: 'Why Choose Us', path: '/admin/whychooseus', icon: <FaQuestion size={20} /> },
     ],
   },
   {
@@ -36,9 +37,12 @@ const navItems = [
     icon: <FaBlog size={24} />,
   },
   {
-    title: 'Infrastructure',
-    path: '/admin/infra',
+    title: 'System',
     icon: <FaBuilding size={24} />,
+    subItems: [
+      { title: 'System', path: '/superadmin/system', icon: <FaThList size={20} /> },
+      { title: 'System Content', path: '/superadmin/system/content', icon: <FaBoxes size={20} /> },
+    ],
   },
   {
     title: 'Products',
@@ -61,8 +65,8 @@ const navItems = [
     title: 'Settings',
     icon: <FaCog size={24} />,
     subItems: [
-      { title: 'Header Setting', path: '/admin/header', icon: <FaHeading size={20} /> },
-      { title: 'Footer Setting', path: '/admin/footer', icon: <FaRegFileAlt size={20} /> },
+      { title: 'Header Setting', path: '/superadmin/header', icon: <FaHeading size={20} /> },
+      { title: 'Footer Setting', path: '/superadmin/footer', icon: <FaRegFileAlt size={20} /> },
     ],
   },
 ];
@@ -79,7 +83,7 @@ const Sidebar = ({ isOpen }) => {
     };
   
     return (
-      <nav className={`bg-gray-800 text-white h-screen overflow-y-auto transition-all duration-300 ${isOpen ? 'w-80' : 'w-0'}`}>
+      <nav className={`bg-gray-800 text-white min-h-screen  overflow-y-auto transition-all duration-300 ${isOpen ? 'w-80' : 'w-0'}`}>
         <div className="p-4">
           {navItems.map((item, index) => (
             <div key={index} className="mb-2">

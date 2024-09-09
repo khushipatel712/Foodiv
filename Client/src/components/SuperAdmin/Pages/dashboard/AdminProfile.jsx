@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
@@ -7,6 +7,31 @@ import Cookies from 'js-cookie';
 const AdminProfile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [adminData, setAdminData] = useState(null);
+
+
+  useEffect(() => {
+    const fetchAdminData = async () => {
+      try {
+        const token = Cookies.get('superadminToken'); 
+        if (token) {
+          const response = await axios.get('http://localhost:5001/api/superadmin/get', {
+            withCredentials: true,  
+            headers: {
+              Authorization: token,  
+            },
+          });
+        setAdminData(response.data);}
+        else {
+          console.error('No token found in cookies');
+        }
+      } catch (error) {
+        console.error("Error fetching admin profile:", error);
+      }
+    };
+
+    fetchAdminData();
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -24,10 +49,18 @@ const AdminProfile = () => {
 
   return (
     <div className="relative">
-      <button onClick={toggleMenu} className="flex items-center space-x-2">
+     <button onClick={toggleMenu} className="flex items-center space-x-2">
+      {adminData && adminData.image ? (
+        <img
+          src={adminData.image}
+          alt="Admin Profile"
+          className="w-8 h-8 rounded-full"
+        />
+      ) : (
         <FaUser className="text-xl" />
-        <span>Admin</span>
-      </button>
+      )}
+      <span>Admin</span>
+    </button>
       {isMenuOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
           <button
