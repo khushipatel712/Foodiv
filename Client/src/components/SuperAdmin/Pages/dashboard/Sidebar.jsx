@@ -16,7 +16,10 @@ const navItems = [
     subItems: [
       { title: 'OnlineWeb', path: '/superadmin/onlineweb', icon: <FaRegImage size={20} /> },
       { title: 'Manage', path: '/superadmin/manage', icon: <FaUser size={20} /> },
-
+      { title: 'Restaurants', path: '/superadmin/restaurant', icon: <FaRegImage size={20} /> },
+      { title: 'Seamless', path: '/superadmin/seamless', icon: <FaUser size={20} /> },
+      { title: 'Setup', path: '/superadmin/setup', icon: <FaRegImage size={20} /> },
+      // { title: 'Manage', path: '/superadmin/manage', icon: <FaUser size={20} /> },
       // { title: 'Counter', path: '/admin/counter', icon: <FaChartBar size={20} /> },
       // { title: 'Sector', path: '/admin/sector', icon: <FaIndustry size={20} /> },
       // { title: 'Why Choose Us', path: '/admin/whychooseus', icon: <FaQuestion size={20} /> },

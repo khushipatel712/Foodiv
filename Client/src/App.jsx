@@ -78,6 +78,13 @@ import FooterDashboard from './components/SuperAdmin/Pages/dashboard/FooterDashb
 import OnlineWebDashboard from './components/SuperAdmin/Pages/dashboard/OnlineWebDashboard';
 import ManageDashboard from './components/SuperAdmin/Pages/dashboard/ManageDashboard';
 import RestaurantDashboard from './components/SuperAdmin/Pages/dashboard/RestaurantDashboard';
+import SeamlessDashboard from './components/SuperAdmin/Pages/dashboard/SeamlessDashboard';
+import SetupDashboard from './components/SuperAdmin/Pages/dashboard/SetupDashboard';
+import FeatureDashboard from './components/SuperAdmin/Pages/dashboard/FeatureDashboard';
+import ServeMoreDashboard from './components/SuperAdmin/Pages/dashboard/ServeMoreDashboard';
+import ShareProfitDashboard from './components/SuperAdmin/Pages/dashboard/ShareProfitDashboard';
+import SmoothProcessDashboard from './components/SuperAdmin/Pages/dashboard/SmoothProcessDashboard';
+import OnlineFoodDashboard from './components/SuperAdmin/Pages/dashboard/OnlineFoodDashboard';
 
 
 function App() {
@@ -143,10 +150,14 @@ function App() {
         <Route path="onlineweb" element={<OnlineWebDashboard/>} />
         <Route path="manage" element={<ManageDashboard/>} />
         <Route path="restaurant" element={<RestaurantDashboard/>} />
-
+        <Route path="seamless" element={<SeamlessDashboard/>} />
+        <Route path="setup" element={<SetupDashboard/>} />
+        <Route path="feature" element={<FeatureDashboard/>} />
+        <Route path="servemore" element={<ServeMoreDashboard/>} />
+        <Route path="shareprofit" element={<ShareProfitDashboard/>} />
+        <Route path="smoothprocess" element={<SmoothProcessDashboard/>} />
+        <Route path="onlinefood" element={<OnlineFoodDashboard/>} />
         </Route>
-
-        {/* <Route path='/superadmin/dashboard' element={<Sidebar1/>}/> */}
 
         {/* <Route path="/login" element={<LoginPage />} /> */}
       <Route path="/admin" element={<PrivateRoute element={AdminLayout} />}>

@@ -33,6 +33,13 @@ const footerRoutes=require('./routes/footerRoutes');
 const onlineWebRoutes = require('./routes/onlinewebRoutes');
 const manageRoutes = require('./routes/manageRoutes');
 const restaurantRoutes = require('./routes/restaurantRoutes');
+const seamlessRoutes = require('./routes/seamlessRoutes');
+const setupRoutes = require('./routes/setupRoutes');
+const featureRoutes = require('./routes/featureRoutes');
+const serveMoreRoutes = require('./routes/servemoreRoutes');
+const shareProfitRoutes = require('./routes/shareprofitRoutes');
+const smoothprocessRoutes= require('./routes/smoothprocessRoutes');
+const onlinefoodRoutes = require('./routes/onlineFoodRoutes')
 
 
 app.use(cors({
@@ -57,6 +64,15 @@ app.use('/api/footer', footerRoutes);
 app.use('/api', onlineWebRoutes);
 app.use('/api', manageRoutes);
 app.use('/api', restaurantRoutes);
+app.use('/api', seamlessRoutes);
+app.use('/api', setupRoutes);
+app.use('/api', featureRoutes);
+app.use('/api', serveMoreRoutes);
+app.use('/api', shareProfitRoutes);
+app.use('/api', smoothprocessRoutes);
+app.use('/api', onlinefoodRoutes);
+
+
 
 
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
