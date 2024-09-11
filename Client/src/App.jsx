@@ -85,6 +85,11 @@ import ServeMoreDashboard from './components/SuperAdmin/Pages/dashboard/ServeMor
 import ShareProfitDashboard from './components/SuperAdmin/Pages/dashboard/ShareProfitDashboard';
 import SmoothProcessDashboard from './components/SuperAdmin/Pages/dashboard/SmoothProcessDashboard';
 import OnlineFoodDashboard from './components/SuperAdmin/Pages/dashboard/OnlineFoodDashboard';
+import RatingDashboard from './components/SuperAdmin/Pages/dashboard/RatingDashboard';
+import RatingForm from './components/SuperAdmin/Pages/dashboard/RatinForm';
+import CustomerDashboard from './components/SuperAdmin/Pages/dashboard/CustomerDashboard';
+import ReviewDashboard from './components/SuperAdmin/Pages/dashboard/ReviewDashboard';
+import FaqDashboard from './components/SuperAdmin/Pages/dashboard/FaqDashboard';
 
 
 function App() {
@@ -157,6 +162,12 @@ function App() {
         <Route path="shareprofit" element={<ShareProfitDashboard/>} />
         <Route path="smoothprocess" element={<SmoothProcessDashboard/>} />
         <Route path="onlinefood" element={<OnlineFoodDashboard/>} />
+        <Route path="ratings" element={<RatingDashboard/>} />
+        <Route path="ratings/add-rating" element={<RatingForm />} />
+        <Route path="ratings/edit-rating/:id" element={<RatingForm/>} />
+        <Route path="customer" element={<CustomerDashboard/>} />
+        <Route path="review" element={<ReviewDashboard/>} />
+        <Route path="faq" element={<FaqDashboard/>} />
         </Route>
 
         {/* <Route path="/login" element={<LoginPage />} /> */}

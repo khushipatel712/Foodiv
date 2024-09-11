@@ -39,7 +39,11 @@ const featureRoutes = require('./routes/featureRoutes');
 const serveMoreRoutes = require('./routes/servemoreRoutes');
 const shareProfitRoutes = require('./routes/shareprofitRoutes');
 const smoothprocessRoutes= require('./routes/smoothprocessRoutes');
-const onlinefoodRoutes = require('./routes/onlineFoodRoutes')
+const onlinefoodRoutes = require('./routes/onlineFoodRoutes');
+const ratingRoutes= require('./routes/ratingRoutes');
+const customerRoutes= require('./routes/customerRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const faqRoutes= require('./routes/faqRoutes')
 
 
 app.use(cors({
@@ -71,8 +75,10 @@ app.use('/api', serveMoreRoutes);
 app.use('/api', shareProfitRoutes);
 app.use('/api', smoothprocessRoutes);
 app.use('/api', onlinefoodRoutes);
-
-
+app.use('/api', ratingRoutes);
+app.use('/api', customerRoutes);
+app.use('/api', reviewRoutes);
+app.use('/api', faqRoutes);
 
 
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
