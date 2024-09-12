@@ -44,6 +44,11 @@ const ratingRoutes= require('./routes/ratingRoutes');
 const customerRoutes= require('./routes/customerRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const faqRoutes= require('./routes/faqRoutes')
+const joinFoodivRoutes = require('./routes/joinFoodivRoutes');
+const becomePartnerroutes = require('./routes/becomePartnerroutes');
+const partnernetworkRoutes = require('./routes/partnerNetworkRoutes');
+const blogRoutes = require('./routes/blogRoutes');
+const blogDetailRoutes = require('./routes/blogDetailRoutes');
 
 
 app.use(cors({
@@ -79,6 +84,11 @@ app.use('/api', ratingRoutes);
 app.use('/api', customerRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', faqRoutes);
+app.use('/api', joinFoodivRoutes);
+app.use('/api', becomePartnerroutes);
+app.use('/api', partnernetworkRoutes);
+app.use('/api', blogRoutes);
+app.use('/api', blogDetailRoutes);
 
 
 app.use('/images', express.static(path.join(__dirname, 'public/images')));

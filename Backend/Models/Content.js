@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
+const System = require('../Models/System')
 
 const KeypointSchema = new mongoose.Schema({
   keytitle: { type: String, required: true },
   keydetail: { type: String, required: true }
 });
+
 
 const PanelSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -11,6 +13,7 @@ const PanelSchema = new mongoose.Schema({
   image: { type: String },
   keypoints: [KeypointSchema]
 });
+
 
 const ContentSchema = new mongoose.Schema({
   title: { type: String },
@@ -30,7 +33,9 @@ const ContentSchema = new mongoose.Schema({
         answer: { type: String }
       }
     ]
-  }
+  },
+
+  system: { type: mongoose.Schema.Types.ObjectId, ref: 'System', required: true }
 });
 
 module.exports = mongoose.model('Content', ContentSchema);
