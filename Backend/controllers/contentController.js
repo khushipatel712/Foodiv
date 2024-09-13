@@ -56,43 +56,51 @@ exports.getContentBySystemSlug = async (req, res) => {
   exports.createContent = async (req, res) => {
     try {
       const {
-        slug, title, content1, title2, content2, title3, title4, panels, faqs
+        title,
+        content1,
+        title2,
+        content2,
+        panel,
+        title3,
+        title4,
+        faqs,
+        system
       } = req.body;
   
-      // Handle image uploads
-      const image1 = req.files['image1'] ? req.files['image1'][0].path : null;
+      // Handle the uploaded files
+      let image1 = null;
+      const parsedPanel = JSON.parse(panel);
   
-      // Find the system by its slug
-      const system = await System.findOne({ slug });
+      req.files.forEach(file => {
+        if (file.fieldname === 'image1') {
+          image1 = file.path;
+        } else if (file.fieldname.startsWith('panelImage')) {
+          const index = parseInt(file.fieldname.replace('panelImage', ''), 10);
+          if (parsedPanel[index]) {
+            parsedPanel[index].image = file.path;
+          }
+        }
+      });
   
-      if (!system) {
-        return res.status(404).json({ error: "System not found" });
-      }
-  
-      // Create new content
       const newContent = new Content({
         title,
         image1,
         content1,
         title2,
         content2,
+        panel: parsedPanel,
         title3,
         title4,
-        panel: panels, // panels is an array
-        faqs // faqs object with title, description, and questions array
+        faqs: JSON.parse(faqs),
+        system
       });
   
-      // Save the new content
-      const savedContent = await newContent.save();
+      await newContent.save();
   
-      // Associate the saved content with the system
-      system.content = savedContent._id;
-      await system.save();
-  
-      // Respond with the saved content
-      res.status(201).json(savedContent);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+      res.status(201).json({ message: 'Content created successfully', content: newContent });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error creating content', error: error.message });
     }
   };
   
@@ -208,6 +216,28 @@ exports.deleteContentBySystemSlug = async (req, res) => {
       );
   
       res.status(200).json({ message: 'Content deleted successfully' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
+  exports.getContentBySystemId = async (req, res) => {
+    try {
+      const { systemId } = req.params;
+      const system = await System.findById(systemId);
+  
+      if (!system) {
+        return res.status(404).json({ message: 'System not found' });
+      }
+  
+      const content = await Content.findOne({ system: systemId });
+         console.log(content);
+      if (!content) {
+        return res.status(200).json({ message: 'No content found for this system', content: null });
+      }
+  
+      res.status(200).json(content);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }

@@ -90,7 +90,12 @@ import RatingForm from './components/SuperAdmin/Pages/dashboard/RatinForm';
 import CustomerDashboard from './components/SuperAdmin/Pages/dashboard/CustomerDashboard';
 import ReviewDashboard from './components/SuperAdmin/Pages/dashboard/ReviewDashboard';
 import FaqDashboard from './components/SuperAdmin/Pages/dashboard/FaqDashboard';
-
+import JoinFoodivDashboard from './components/SuperAdmin/Pages/dashboard/JoinFoodivDashboard';
+import BecomePartnerDashboard from './components/SuperAdmin/Pages/dashboard/BecomePartnerDashboard';
+import PartnerNetworkDashboard from './components/SuperAdmin/Pages/dashboard/PartnerNetworkDashboard';
+import BlogDetailDashboard from './components/SuperAdmin/Pages/dashboard/BlogDetailDashboard';
+import BlogDashboard from './components/SuperAdmin/Pages/dashboard/BlogDashboard';
+import EditBlog from './components/SuperAdmin/Pages/dashboard/EditBlogDashboard';
 
 function App() {
   return (
@@ -168,9 +173,16 @@ function App() {
         <Route path="customer" element={<CustomerDashboard/>} />
         <Route path="review" element={<ReviewDashboard/>} />
         <Route path="faq" element={<FaqDashboard/>} />
+        <Route path="joinfoodiv" element={<JoinFoodivDashboard/>} />
+        <Route path="becomepartner" element={<BecomePartnerDashboard/>} />
+        <Route path="partnernetwork" element={<PartnerNetworkDashboard/>} />
+        <Route path="blogdetail" element={<BlogDetailDashboard/>} />
+        <Route path="blog" element={<BlogDashboard/>} />
+        <Route path="blog/add-blog" element={<EditBlog/>} />
+        <Route path="blog/edit-blog/:slug" element={<EditBlog/>} />
         </Route>
 
-        {/* <Route path="/login" element={<LoginPage />} /> */}
+
       <Route path="/admin" element={<PrivateRoute element={AdminLayout} />}>
         <Route index element={<PrivateRoute element={Dashboard} />} />
         <Route path="dashboard" element={<PrivateRoute element={Dashboard} />} />
@@ -188,6 +200,7 @@ function App() {
         <Route path="menu/addmenuitem" element={<PrivateRoute element={AddMenuItem} />} />
         <Route path="menu/edit-item-menu/:menuItemId" element={<PrivateRoute element={AddMenuItem} />} />
         <Route path="account" element={<PrivateRoute element={AdminDetail} />} />
+        
       </Route>
     
       </Routes>

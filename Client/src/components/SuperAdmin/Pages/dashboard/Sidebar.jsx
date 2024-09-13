@@ -19,6 +19,15 @@ const navItems = [
       { title: 'Restaurants', path: '/superadmin/restaurant', icon: <FaRegImage size={20} /> },
       { title: 'Seamless', path: '/superadmin/seamless', icon: <FaUser size={20} /> },
       { title: 'Setup', path: '/superadmin/setup', icon: <FaRegImage size={20} /> },
+      { title: 'Feature', path: '/superadmin/feature', icon: <FaRegImage size={20} /> },
+      { title: 'Servemore', path: '/superadmin/servemore', icon: <FaUser size={20} /> },
+      { title: 'Shareprofit', path: '/superadmin/shareprofit', icon: <FaRegImage size={20} /> },
+      { title: 'SmoothProcess', path: '/superadmin/smoothprocess', icon: <FaUser size={20} /> },
+      { title: 'OnlineFood', path: '/superadmin/onlinefood', icon: <FaRegImage size={20} /> },
+      { title: 'Ratings', path: '/superadmin/ratings', icon: <FaUser size={20} /> },
+      { title: 'Customer', path: '/superadmin/customer', icon: <FaRegImage size={20} /> },
+      { title: 'Review', path: '/superadmin/review', icon: <FaUser size={20} /> },
+      { title: 'Faq', path: '/superadmin/faq', icon: <FaRegImage size={20} /> },
       // { title: 'Manage', path: '/superadmin/manage', icon: <FaUser size={20} /> },
       // { title: 'Counter', path: '/admin/counter', icon: <FaChartBar size={20} /> },
       // { title: 'Sector', path: '/admin/sector', icon: <FaIndustry size={20} /> },
@@ -36,7 +45,7 @@ const navItems = [
   },
   {
     title: 'Blogs',
-    path: '/admin/blog',
+    path: '/superadmin/blog',
     icon: <FaBlog size={24} />,
   },
   {
@@ -48,12 +57,12 @@ const navItems = [
     ],
   },
   {
-    title: 'Products',
+    title: 'Partner',
     icon: <FaBox size={24} />,
     subItems: [
-      { title: 'Category', path: '/admin/category', icon: <FaThList size={20} /> },
-      { title: 'Product', path: '/admin/product', icon: <FaBoxes size={20} /> },
-      { title: 'Application', path: '/admin/application', icon: <FaTasks size={20} /> },
+      { title: 'Join Foddiv', path: '/superadmin/joinfoodiv', icon: <FaThList size={20} /> },
+      { title: 'How to Become Partner', path: '/superadmin/becomepartner', icon: <FaBoxes size={20} /> },
+      { title: 'Partner Network', path: '/superadmin/partnernetwork', icon: <FaTasks size={20} /> },
     ],
   },
   {

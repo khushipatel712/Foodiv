@@ -8,4 +8,4 @@ router.get('/', footerController.getFooter);
 
 router.post('/', upload.single('logo'), footerController.updateFooter);
 
-module.exports = router;
+module.exports = router;    
