@@ -96,6 +96,8 @@ import PartnerNetworkDashboard from './components/SuperAdmin/Pages/dashboard/Par
 import BlogDetailDashboard from './components/SuperAdmin/Pages/dashboard/BlogDetailDashboard';
 import BlogDashboard from './components/SuperAdmin/Pages/dashboard/BlogDashboard';
 import EditBlog from './components/SuperAdmin/Pages/dashboard/EditBlogDashboard';
+import Orders from './components/User/Orders';
+import CheckOrder from './components/User/CheckOrder';
 
 function App() {
   return (
@@ -128,6 +130,8 @@ function App() {
                     <Route path="privacy" element={<PrivacyPolicyPage />} />
                     <Route path="shipping" element={<ShippingPolicyPage />} />
                     <Route path="cancellation" element={<CancellationPolicyPage />} />
+                    <Route path="user/orders" element={<Orders />} />
+                    <Route path="user/check-order" element={<CheckOrder />} />
      </Route>
 
      <Route path="pricing" element={<SubscriptionPlan/>} /> 

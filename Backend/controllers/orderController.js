@@ -1,4 +1,5 @@
 const UserOrderDetail = require('../Models/UserOrderDetail');
+const Order = require('../Models/UserOrderDetail')
 // const razorpayInstance = require('../config/razorpayConfig');
 const { config } = require('dotenv');
 const Razorpay = require('razorpay');
@@ -247,5 +248,31 @@ exports.updatePaymentStatus = async (req, res) => {
   } catch (error) {
     console.error('Error updating payment status:', error);
     res.status(500).json({ error: 'Failed to update payment status' });
+  }
+};
+
+
+exports.getOrders = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const { userId } = req.user; // Assuming you have middleware to extract user info from token
+    const orders = await Order.find({ admin: adminId, 'contactDetail.userId': userId });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching orders', error: error.message });
+  }
+};
+
+exports.checkOrder = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const { mobileNumber } = req.body;
+    const orders = await Order.find({ 
+      admin: adminId, 
+      'contactDetail.mobile': mobileNumber 
+    });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Error checking order', error: error.message });
   }
 };

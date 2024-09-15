@@ -61,6 +61,14 @@ const Navbar = () => {
     setToken(''); // Clear token from state
   };
 
+  const handleMyOrdersClick = () => {
+    if (token) {
+      handleNavigation(`/${id}/user/orders`);
+    } else {
+      handleNavigation(`/${id}/user/check-order`);
+    }
+  };
+
   return (
     <div className="relative z-50">
       <nav className="bg-white shadow-md flex items-center justify-between p-4 lg:px-20">
@@ -87,6 +95,7 @@ const Navbar = () => {
             </button>
             <ul className="mt-6 space-y-4 text-sm sm:text-base">
               <li><button onClick={()=>handleNavigation (`/${id}/user/menu`)} className="block text-orange-500 hover:text-orange-700">Home</button></li>
+              <li><button onClick={handleMyOrdersClick} className="block text-orange-500 hover:text-orange-700">My Orders</button></li>
               {!
               token ? (
                 <>

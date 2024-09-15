@@ -9,7 +9,6 @@ const points = [
   'Free Online Ordering System'
 ];
 
-
 export default function Onlineweb() {
   return (
     <div className="flex flex-col items-center justify-center text-center mt-24 lg:px-20 px-5  p-6">
